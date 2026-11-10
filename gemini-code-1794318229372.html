@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSync - Plataforma en la Nube</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase App y Realtime Database -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .tab-active { border-bottom: 3px solid #2563eb; color: #2563eb; font-weight: 600; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
+    </style>
+</head>
+<body class="h-full flex flex-col text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-slate-900 text-white shadow-lg border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div id="secret-logo-trigger" onclick="abrirModalClave()" title="Modo secreto (Ingresa clave)" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold text-xl shadow-md cursor-pointer select-none hover:scale-105 transition-transform active:scale-95">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-none tracking-tight">EduSync <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30 font-normal">Cloud Sync Live</span></h1>
+                    <p class="text-xs text-slate-400 mt-0.5">Plan de Mejora de Comunicación y Organización Docente</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <!-- Insignia Academium -->
+                <div class="flex items-center gap-2 bg-slate-800 px-3 py-1 rounded-full border border-slate-700 shadow-inner">
+                    <img src="https://jefferson.academium.ec/favicon.ico" alt="Academium" class="w-4 h-4 rounded-full bg-white p-0.5" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2991/2991106.png'">
+                    <span class="text-xs font-medium text-slate-300">Conectado con <strong class="text-blue-400">Academium</strong></span>
+                </div>
+
+                <!-- Status Nube -->
+                <span id="cloud-status" class="hidden sm:inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-2 h-2 mr-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Nube Conectada
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-slate-200 sticky top-16 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-8 overflow-x-auto">
+                <button onclick="switchTab('calendar')" id="tab-btn-calendar" class="tab-btn tab-active py-4 px-1 inline-flex items-center gap-2 text-sm font-medium border-b-2 whitespace-nowrap">
+                    <i class="fa-solid fa-calendar-check"></i> Calendario Unificado Anti-Saturación
+                </button>
+                <button onclick="switchTab('minutas')" id="tab-btn-minutas" class="tab-btn text-slate-500 hover:text-slate-700 py-4 px-1 inline-flex items-center gap-2 text-sm font-medium border-b-2 border-transparent whitespace-nowrap">
+                    <i class="fa-solid fa-clipboard-list"></i> Gestor de Minutas y Acuerdos
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- TAB 1: CALENDARIO -->
+        <section id="tab-calendar" class="tab-content space-y-6">
+            <div class="glass-card rounded-xl p-5 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-lg">Calendario Académico Sincronizado</h3>
+                        <p class="text-xs text-slate-500">Límite activo: <span class="bg-amber-100 text-amber-800 font-semibold px-2 py-0.5 rounded">Máximo 2 evaluaciones mayores por día</span></p>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-semibold text-slate-600">Curso:</label>
+                        <select id="filtro-grado" onchange="cambiarGrado()" class="bg-slate-100 border border-slate-300 rounded-lg text-xs px-3 py-1.5 font-medium outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="9no Grado">9no Grado</option>
+                            <option value="10mo Grado">10mo Grado</option>
+                            <option value="1er Bachillerato">1er Bachillerato</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="openAddModal()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2.5 rounded-lg shadow transition flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Programar Actividad / Evaluación
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="calendar-grid">
+                <!-- Renderizado dinámico desde la Nube -->
+            </div>
+        </section>
+
+        <!-- TAB 2: MINUTAS -->
+        <section id="tab-minutas" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="glass-card rounded-xl p-5 shadow-sm lg:col-span-1 h-fit">
+                    <h3 class="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-blue-600"></i> Registrar Acuerdo de Reunión
+                    </h3>
+                    <form onsubmit="guardarMinuta(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Título del Acuerdo</label>
+                            <input type="text" id="minuta-titulo" required placeholder="Ej: Definir temario final" class="w-full bg-slate-50 border border-slate-300 rounded-lg text-xs p-2.5 outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Responsable</label>
+                            <select id="minuta-responsable" class="w-full bg-slate-50 border border-slate-300 rounded-lg text-xs p-2.5 outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>Arianna</option>
+                                <option>Jorge</option>
+                                <option>Sury</option>
+                                <option>Sergio</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold py-2.5 rounded-lg shadow transition">
+                            Guardar en la Nube
+                        </button>
+                    </form>
+                </div>
+
+                <div class="glass-card rounded-xl p-5 shadow-sm lg:col-span-2 space-y-4">
+                    <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-600"></i> Acuerdos Sincronizados
+                    </h3>
+                    <div id="lista-minutas" class="space-y-3"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Agregar Evaluación Completa -->
+    <div id="add-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-plus text-blue-600"></i> Programar Actividad Escolar
+                </h3>
+                <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <form onsubmit="saveCalendarEvent(event)" class="space-y-3 text-xs">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Día de la Semana</label>
+                        <select id="modal-dia" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Lunes">Lunes</option>
+                            <option value="Martes">Martes</option>
+                            <option value="Miércoles">Miércoles</option>
+                            <option value="Jueves">Jueves</option>
+                            <option value="Viernes">Viernes</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Tipo de Actividad</label>
+                        <select id="modal-tipo" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Examen Mayor">🔴 Examen Mayor</option>
+                            <option value="Entrega de Proyecto">🟣 Entrega de Proyecto</option>
+                            <option value="Quiz / Prueba Corta">🟡 Quiz / Prueba Corta</option>
+                            <option value="Tarea Regular">🔵 Tarea Regular</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Asignatura</label>
+                        <input type="text" id="modal-materia" required placeholder="Ej: Matemáticas" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Docente Responsable</label>
+                        <select id="modal-docente" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Sergio">Sergio</option>
+                            <option value="Arianna">Arianna</option>
+                            <option value="Jorge">Jorge</option>
+                            <option value="Sury">Sury</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Descripción / Instrucciones (Texto)</label>
+                    <textarea id="modal-texto" rows="3" placeholder="Detalla los temas del examen o las indicaciones de la entrega..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1"><i class="fa-solid fa-paperclip text-slate-400 mr-1"></i> Adjuntar Enlace de Archivo / Guía (Drive, PDF, etc.)</label>
+                    <input type="url" id="modal-archivo" placeholder="https://drive.google.com/file/d/..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="flex justify-end gap-2 pt-3 border-t">
+                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow">Guardar y Sincronizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL INGRESO DE CLAVE SECRETA -->
+    <div id="key-input-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-[90] p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-xl shadow-2xl max-w-xs w-full p-5 space-y-4 text-center">
+            <div class="w-12 h-12 rounded-full bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-key"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-white text-base">Modo Secreto</h3>
+                <p class="text-xs text-slate-400 mt-1">Ingresa el código PIN para desbloquear:</p>
+            </div>
+            
+            <form onsubmit="verificarClaveIngresada(event)" class="space-y-3">
+                <input type="password" id="secret-pin-input" placeholder="Ingresa PIN..." maxlength="8" class="w-full bg-slate-800 border border-slate-700 text-center text-white text-lg tracking-widest rounded-lg py-2 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                <p id="pin-error-msg" class="text-xs text-rose-400 hidden font-medium"><i class="fa-solid fa-circle-exclamation mr-1"></i> Código incorrecto</p>
+                <div class="flex gap-2">
+                    <button type="button" onclick="cerrarModalClave()" class="w-1/2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold py-2 rounded-lg">Cancelar</button>
+                    <button type="submit" class="w-1/2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold py-2 rounded-lg shadow">Acceder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PANEL SECRETO MULTI-CONSOLA (POST CLAVE 6123) -->
+    <div id="secret-hub-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md hidden items-center justify-center z-[100] p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-w-md w-full p-6 text-center space-y-5 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="cerrarSecretHub()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl transition"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center mx-auto text-2xl shadow-lg shadow-blue-500/30">
+                <i class="fa-solid fa-gamepad"></i>
+            </div>
+            
+            <div>
+                <h3 class="font-bold text-white text-xl tracking-wide">Modo Secreto Desbloqueado</h3>
+                <p class="text-xs text-slate-400 mt-1">Selecciona qué deseas abrir:</p>
+            </div>
+            
+            <div class="space-y-4 pt-2">
+                <!-- Sección 1: PSP (Abre en pestaña nueva) -->
+                <div class="space-y-2">
+                    <p class="text-xs font-semibold text-slate-400 text-left border-b border-slate-800 pb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-compact-disc text-blue-400"></i> PlayStation Portable (PSP)
+                    </p>
+                    <a href="https://root-hunter.github.io/ppsspp-web/?runtime-isolation=1794243516609" target="_blank" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-3 text-xs md:text-sm">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-base"></i> Abrir Emulador PPSSPP Web (Pestaña)
+                    </a>
+                    <a href="https://drive.google.com/drive/folders/1g4eZ0z_F2PBJqT6pLJtlui4ojiYMc0kV?usp=sharing" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-3 text-xs md:text-sm">
+                        <i class="fa-solid fa-folder-open text-base"></i> Abrir Carpeta Juegos PSP (.ISO)
+                    </a>
+                </div>
+
+                <!-- Sección 2: PS Vita (Abre en Iframe dentro de la web) -->
+                <div class="space-y-2 pt-1">
+                    <p class="text-xs font-semibold text-slate-400 text-left border-b border-slate-800 pb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-gamepad text-purple-400"></i> PlayStation Vita (PSVITA)
+                    </p>
+                    <button type="button" onclick="abrirEmuladorVita()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-3 text-xs md:text-sm">
+                        <i class="fa-solid fa-play text-base"></i> Abrir Emulador PS Vita Web (Iframe)
+                    </button>
+                    <a href="https://drive.google.com/drive/folders/1cgdD_j5xbQv70VnpK-QlUx1pNVTz_28z?usp=sharing" target="_blank" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-3 text-xs md:text-sm">
+                        <i class="fa-solid fa-folder-open text-base"></i> Abrir Carpeta Juegos PS Vita
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EMULADOR PS VITA EN IFRAME -->
+    <div id="vita-emulator-modal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md hidden items-center justify-center z-[110] p-2 md:p-6">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl max-w-6xl w-full h-[90vh] flex flex-col overflow-hidden relative">
+            <div class="bg-slate-800/90 px-6 py-3 border-b border-slate-700 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <span class="w-3 h-3 rounded-full bg-purple-500 animate-ping"></span>
+                    <h3 class="font-bold text-white text-base md:text-lg tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-gamepad text-purple-400"></i> PS Vita Web Emulator (Vitaslop)
+                    </h3>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="https://cretz.github.io/vitaslop/" target="_blank" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir en Nueva Pestaña
+                    </a>
+                    <button onclick="cerrarEmuladorVita()" class="text-slate-400 hover:text-white text-xl transition px-2"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+
+            <div class="relative w-full flex-1 bg-black overflow-hidden">
+                <iframe id="vita-iframe" 
+                        src="" 
+                        class="w-full h-full border-0" 
+                        allow="cross-origin-isolated; autoplay; fullscreen; gamepad; clipboard-read; clipboard-write; acceleration; gyroscope" 
+                        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads">
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Script & App Logic -->
+    <script>
+        const firebaseConfig = {
+            databaseURL: "https://edusync-c85df-default-rtdb.firebaseio.com/"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let currentGrado = "9no Grado";
+        let fullCalendarData = {};
+        let calendarData = { "Lunes": [], "Martes": [], "Miércoles": [], "Jueves": [], "Viernes": [] };
+        let minutasRawData = {};
+
+        const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+
+        // Escuchar cambios en el calendario en la Nube
+        db.ref('calendar').on('value', (snapshot) => {
+            const data = snapshot.val();
+            fullCalendarData = data || {};
+            actualizarVistaGrado();
+        });
+
+        // Escuchar cambios en minutas en la Nube
+        db.ref('minutas').on('value', (snapshot) => {
+            minutasRawData = snapshot.val() || {};
+            renderMinutas();
+        });
+
+        function actualizarVistaGrado() {
+            if (!fullCalendarData[currentGrado]) {
+                calendarData = { "Lunes": [], "Martes": [], "Miércoles": [], "Jueves": [], "Viernes": [] };
+            } else {
+                calendarData = fullCalendarData[currentGrado];
+                diasSemana.forEach(d => {
+                    if (!calendarData[d]) calendarData[d] = [];
+                });
+            }
+            renderCalendar();
+        }
+
+        function cambiarGrado() {
+            currentGrado = document.getElementById('filtro-grado').value;
+            actualizarVistaGrado();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('tab-active');
+                btn.classList.add('text-slate-500', 'border-transparent');
+            });
+            
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            activeBtn.classList.add('tab-active');
+            activeBtn.classList.remove('text-slate-500', 'border-transparent');
+        }
+
+        function renderCalendar() {
+            const container = document.getElementById('calendar-grid');
+            container.innerHTML = '';
+
+            diasSemana.forEach(dia => {
+                const eventos = calendarData[dia] || [];
+                const examenesMayores = eventos.filter(e => e.tipo === 'Examen Mayor').length;
+                const isOverloaded = examenesMayores >= 2;
+
+                let eventsHtml = eventos.map((ev, index) => {
+                    let badgeColor = 'bg-blue-100 text-blue-800 border-blue-200';
+                    let icon = 'fa-book';
+                    if (ev.tipo === 'Examen Mayor') { badgeColor = 'bg-rose-100 text-rose-800 border-rose-300'; icon = 'fa-file-pen'; }
+                    else if (ev.tipo === 'Entrega de Proyecto') { badgeColor = 'bg-purple-100 text-purple-800 border-purple-300'; icon = 'fa-diagram-project'; }
+                    else if (ev.tipo === 'Quiz / Prueba Corta') { badgeColor = 'bg-amber-100 text-amber-800 border-amber-300'; icon = 'fa-clock'; }
+
+                    return `
+                        <div class="p-2.5 rounded-lg border ${badgeColor} text-xs space-y-1 shadow-sm relative group">
+                            <div class="flex justify-between items-center font-bold">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid ${icon}"></i> ${ev.materia}</span>
+                                <button type="button" onclick="deleteEvent('${dia}', ${index})" class="text-slate-400 hover:text-rose-600 transition p-1 cursor-pointer" title="Eliminar"><i class="fa-solid fa-trash text-xs"></i></button>
+                            </div>
+                            <div class="text-[10px] font-semibold opacity-90">${ev.tipo || 'Evaluación'}</div>
+                            <p class="text-[10px] text-slate-600"><i class="fa-solid fa-user-tie"></i> Prof. ${ev.docente}</p>
+                            ${ev.texto ? `<p class="text-[10px] text-slate-700 bg-white/80 p-1.5 rounded mt-1 border border-slate-200/50">${ev.texto}</p>` : ''}
+                            ${ev.archivo ? `<a href="${ev.archivo}" target="_blank" class="inline-flex items-center gap-1 text-[10px] text-blue-600 hover:underline font-bold mt-1"><i class="fa-solid fa-paperclip"></i> Ver Adjunto</a>` : ''}
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML += `
+                    <div class="glass-card rounded-xl p-4 shadow-sm flex flex-col justify-between space-y-3 border ${isOverloaded ? 'border-amber-400 bg-amber-50/30' : 'border-slate-200'}">
+                        <div>
+                            <div class="flex items-center justify-between border-b pb-2 mb-3">
+                                <h4 class="font-bold text-slate-800 text-sm">${dia}</h4>
+                                <span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">${eventos.length} act.</span>
+                            </div>
+
+                            ${isOverloaded ? `
+                                <div class="mb-3 p-1.5 bg-amber-100 border border-amber-300 rounded text-[10px] font-bold text-amber-800 flex items-center gap-1">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> Límite de exámenes alcanzado
+                                </div>
+                            ` : ''}
+
+                            <div class="space-y-2">
+                                ${eventsHtml || '<p class="text-[11px] text-slate-400 italic text-center py-4">Sin actividades</p>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openAddModal() {
+            const modal = document.getElementById('add-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeAddModal() {
+            const modal = document.getElementById('add-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function saveCalendarEvent(e) {
+            e.preventDefault();
+            const dia = document.getElementById('modal-dia').value;
+            const tipo = document.getElementById('modal-tipo').value;
+            const materia = document.getElementById('modal-materia').value;
+            const docente = document.getElementById('modal-docente').value;
+            const texto = document.getElementById('modal-texto').value;
+            const archivo = document.getElementById('modal-archivo').value;
+
+            if (!fullCalendarData[currentGrado]) fullCalendarData[currentGrado] = {};
+            if (!fullCalendarData[currentGrado][dia]) fullCalendarData[currentGrado][dia] = [];
+
+            fullCalendarData[currentGrado][dia].push({
+                tipo, materia, docente, texto, archivo
+            });
+
+            db.ref(`calendar/${currentGrado}/${dia}`).set(fullCalendarData[currentGrado][dia])
+                .then(() => {
+                    closeAddModal();
+                    document.getElementById('modal-materia').value = '';
+                    document.getElementById('modal-texto').value = '';
+                    document.getElementById('modal-archivo').value = '';
+                });
+        }
+
+        function deleteEvent(dia, index) {
+            if (!fullCalendarData[currentGrado] || !fullCalendarData[currentGrado][dia]) return;
+            fullCalendarData[currentGrado][dia].splice(index, 1);
+            db.ref(`calendar/${currentGrado}/${dia}`).set(fullCalendarData[currentGrado][dia]);
+        }
+
+        // --- SECCIÓN MINUTAS ---
+        function guardarMinuta(e) {
+            e.preventDefault();
+            const titulo = document.getElementById('minuta-titulo').value;
+            const responsable = document.getElementById('minuta-responsable').value;
+
+            const nuevaMinutaRef = db.ref('minutas').push();
+            nuevaMinutaRef.set({
+                titulo: titulo,
+                responsable: responsable,
+                fecha: new Date().toLocaleDateString('es-ES')
+            }).then(() => {
+                document.getElementById('minuta-titulo').value = '';
+            });
+        }
+
+        function renderMinutas() {
+            const container = document.getElementById('lista-minutas');
+            container.innerHTML = '';
+
+            const keys = Object.keys(minutasRawData);
+            if (keys.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 italic">No hay acuerdos registrados en la nube.</p>';
+                return;
+            }
+
+            keys.reverse().forEach(key => {
+                const item = minutasRawData[key];
+                container.innerHTML += `
+                    <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between gap-3 text-xs">
+                        <div>
+                            <p class="font-bold text-slate-800">${item.titulo}</p>
+                            <p class="text-[10px] text-slate-500"><i class="fa-solid fa-user-tag"></i> ${item.responsable} • <i class="fa-regular fa-clock"></i> ${item.fecha || 'Reciente'}</p>
+                        </div>
+                        <button type="button" onclick="eliminarMinuta('${key}')" class="text-slate-400 hover:text-rose-600 transition p-1 cursor-pointer" title="Eliminar"><i class="fa-solid fa-trash text-xs"></i></button>
+                    </div>
+                `;
+            });
+        }
+
+        function eliminarMinuta(key) {
+            if (!key) return;
+            db.ref(`minutas/${key}`).remove();
+        }
+
+        // --- SECCIÓN MODO SECRETO ---
+        function abrirModalClave() {
+            const modal = document.getElementById('key-input-modal');
+            const pinInput = document.getElementById('secret-pin-input');
+            const errorMsg = document.getElementById('pin-error-msg');
+            
+            pinInput.value = '';
+            errorMsg.classList.add('hidden');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => pinInput.focus(), 100);
+        }
+
+        function cerrarModalClave() {
+            const modal = document.getElementById('key-input-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function verificarClaveIngresada(e) {
+            e.preventDefault();
+            const inputVal = document.getElementById('secret-pin-input').value.trim();
+            const errorMsg = document.getElementById('pin-error-msg');
+
+            if (inputVal === "6123") {
+                cerrarModalClave();
+                abrirSecretHub();
+            } else {
+                errorMsg.classList.remove('hidden');
+                document.getElementById('secret-pin-input').value = '';
+                document.getElementById('secret-pin-input').focus();
+            }
+        }
+
+        function abrirSecretHub() {
+            const modal = document.getElementById('secret-hub-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function cerrarSecretHub() {
+            const modal = document.getElementById('secret-hub-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // --- EMULADOR PS VITA IFRAME MODAL ---
+        function abrirEmuladorVita() {
+            cerrarSecretHub();
+            const iframe = document.getElementById('vita-iframe');
+            if (!iframe.src || iframe.src === "about:blank" || iframe.src === window.location.href) {
+                iframe.src = "https://cretz.github.io/vitaslop/";
+            }
+            const modal = document.getElementById('vita-emulator-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function cerrarEmuladorVita() {
+            const modal = document.getElementById('vita-emulator-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    </script>
+</body>
+</html>
