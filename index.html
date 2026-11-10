@@ -1,128 +1,174 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full bg-slate-950">
+<html lang="es" class="h-full bg-[#070410] text-slate-100 selection:bg-purple-600 selection:text-white">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Encuesta EduSync - Academium</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EduSync - Portal Académico Academium PRO</title>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f0ff',
+                            100: '#edd5ff',
+                            400: '#c084fc',
+                            500: '#a824fd',
+                            600: '#6b00d7',
+                            700: '#5200bd',
+                            950: '#14082e',
+                        },
+                        cyber: {
+                            neon: '#00f0ff',
+                            pink: '#ff007f',
+                            amber: '#ffb700',
+                            emerald: '#00ff9d',
+                            violet: '#a824fd'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        space: ['Space Grotesk', 'sans-serif']
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 4s ease-in-out infinite',
+                        'float-slow': 'floatSlow 6s ease-in-out infinite',
+                        'scanline': 'scanline 8s linear infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.4', filter: 'drop-shadow(0 0 20px rgba(168, 36, 253, 0.3))' },
+                            '50%': { opacity: '0.8', filter: 'drop-shadow(0 0 40px rgba(0, 240, 255, 0.6))' }
+                        },
+                        floatSlow: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-16px) rotate(3deg)' }
+                        },
+                        scanline: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(1000%)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase App y Realtime Database -->
+
+    <!-- Firebase App & Realtime DB (SDK Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700;900&display=swap" rel="stylesheet">
+
     <style>
         body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #090514;
-            color: #f1f5f9;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #070410;
         }
-        
-        @keyframes floatSlow {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-14px) rotate(3deg); }
-        }
-        .animate-float { animation: floatSlow 6s ease-in-out infinite; }
 
-        @keyframes glowPulse {
-            0%, 100% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 0.75; transform: scale(1.08); }
-        }
-        .animate-glow { animation: glowPulse 7s ease-in-out infinite; }
-
-        /* Glassmorphism Ultra Dark */
-        .glass-card {
-            background: rgba(19, 13, 38, 0.78);
+        /* Glassmorphism 2.0 Panels */
+        .glass-panel {
+            background: rgba(18, 12, 38, 0.75);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(168, 85, 247, 0.28);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
         }
 
-        .glass-input {
-            background: rgba(30, 20, 60, 0.65);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            color: #f8fafc;
-        }
-        .glass-input:focus {
-            border-color: #a855f7;
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.35);
-            background: rgba(40, 25, 80, 0.85);
+        .glass-card {
+            background: rgba(28, 18, 58, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(168, 36, 253, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
 
-        /* Estilo de Calificación interactivo con luces */
-        .rating-star-label {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .rating-star-label:hover {
-            background: rgba(245, 158, 11, 0.15);
-            border-color: rgba(245, 158, 11, 0.4);
-            transform: translateY(-2px);
+        .nav-active {
+            background: linear-gradient(135deg, #6b00d7 0%, #a824fd 100%);
+            color: #ffffff !important;
+            box-shadow: 0 8px 25px rgba(107, 0, 215, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        .rating-star-input:checked + .rating-star-label {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.28) 0%, rgba(217, 119, 6, 0.15) 100%);
-            border-color: #f59e0b;
-            color: #fbbf24;
-            box-shadow: 0 0 18px rgba(245, 158, 11, 0.45);
-            transform: translateY(-3px) scale(1.04);
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-        .rating-star-input:checked + .rating-star-label i {
-            color: #fbbf24;
-            filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8));
+        ::-webkit-scrollbar-track {
+            background: rgba(10, 6, 24, 0.8);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #6b00d7, #00f0ff);
+            border-radius: 10px;
         }
 
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #9333ea; border-radius: 8px; }
+        /* Tactile push animation */
+        .btn-touch {
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-touch:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
-<body class="h-full flex flex-col text-slate-100 bg-[#090514] relative min-h-screen overflow-x-hidden selection:bg-purple-500 selection:text-white">
+<body class="h-full flex flex-col text-slate-100 relative min-h-screen overflow-x-hidden selection:bg-purple-500 selection:text-white">
 
     <!-- ========================================== -->
-    <!-- FONDO ACADEMIUM: NEBULOSA INTERACTIVA Y VECTORS -->
+    <!-- DYNAMIC BACKGROUND MESH & VR VECTOR GRAPHIC -->
     <!-- ========================================== -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <!-- Luces neón en background -->
-        <div class="absolute -bottom-32 -left-32 w-[30rem] h-[30rem] bg-purple-900/40 rounded-full blur-[120px] animate-glow"></div>
-        <div class="absolute top-10 left-1/3 w-96 h-96 bg-indigo-900/30 rounded-full blur-[140px]"></div>
+        <!-- Glowing Nebulae blobs -->
+        <div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-brand-600/35 rounded-full blur-[140px] animate-pulse-glow"></div>
+        <div class="absolute top-1/3 -right-40 w-[650px] h-[650px] bg-cyber-neon/20 rounded-full blur-[160px]"></div>
+        <div class="absolute -bottom-40 left-1/3 w-[700px] h-[700px] bg-cyber-pink/15 rounded-full blur-[170px]"></div>
 
-        <!-- Vector de fondo Academium -->
-        <div class="absolute top-12 right-0 w-full lg:w-[58%] h-[calc(100vh-3rem)] flex justify-end items-center opacity-30 lg:opacity-100 transition-opacity">
+        <!-- Cyber Grid Overlay -->
+        <div class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
+
+        <!-- Academium Space VR Vector Graphic (Right Side) -->
+        <div class="absolute top-8 right-0 w-full lg:w-[55%] h-[calc(100vh-2rem)] flex justify-end items-center opacity-30 lg:opacity-100 transition-opacity">
             <svg class="w-full h-full max-h-[850px] object-cover" viewBox="0 0 700 700" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M650 100C720 200 680 350 640 480C600 610 520 680 380 660C240 640 180 520 210 410C240 300 320 260 370 190C420 120 580 0 650 100Z" fill="url(#academium-grad-dark)" />
+                <!-- Main Purple Gradient Wave -->
+                <path d="M650 100C720 200 680 350 640 480C600 610 520 680 380 660C240 640 180 520 210 410C240 300 320 260 370 190C420 120 580 0 650 100Z" fill="url(#academium-futuristic)" opacity="0.85"/>
                 
-                <path d="M250 280 Q 450 180, 620 320 T 500 550" stroke="rgba(255,255,255,0.25)" stroke-width="6" stroke-linecap="round" fill="none"/>
-                <path d="M300 220 Q 500 140, 660 260" stroke="rgba(255,255,255,0.15)" stroke-width="4" stroke-linecap="round" fill="none"/>
+                <!-- Orbital Ring Rays -->
+                <path d="M250 280 Q 450 180, 620 320 T 500 550" stroke="#00f0ff" stroke-width="4" stroke-linecap="round" opacity="0.6" fill="none"/>
+                <path d="M300 220 Q 500 140, 660 260" stroke="#a824fd" stroke-width="3" stroke-linecap="round" opacity="0.5" fill="none"/>
                 
-                <circle cx="580" cy="180" r="35" fill="#c084fc" opacity="0.4"/>
-                <circle cx="595" cy="170" r="12" fill="#e9d5ff" opacity="0.7"/>
-                <circle cx="280" cy="490" r="22" fill="#f472b6" opacity="0.5"/>
-                <rect x="520" y="440" width="28" height="28" rx="6" transform="rotate(25 520 440)" fill="#60a5fa" opacity="0.6"/>
+                <!-- Floating 3D Orbs -->
+                <circle cx="580" cy="180" r="38" fill="#a824fd" opacity="0.7" class="animate-pulse"/>
+                <circle cx="595" cy="170" r="14" fill="#00f0ff" opacity="0.95"/>
+                <circle cx="280" cy="490" r="26" fill="#ff007f" opacity="0.85"/>
+                <rect x="520" y="440" width="30" height="30" rx="8" transform="rotate(25 520 440)" fill="#60a5fa" opacity="0.8"/>
+                <rect x="340" y="240" width="20" height="20" rx="5" transform="rotate(12 340 240)" fill="#00ff9d" opacity="0.8"/>
                 
-                <path d="M480 120 L484 130 L494 134 L484 138 L480 148 L476 138 L466 134 L476 130 Z" fill="#38bdf8" opacity="0.9"/>
-                <path d="M320 360 L323 367 L330 370 L323 373 L320 380 L317 373 L310 370 L317 367 Z" fill="#a7f3d0" opacity="0.8"/>
+                <!-- Sparkle Stars -->
+                <path d="M480 120 L484 130 L494 134 L484 138 L480 148 L476 138 L466 134 L476 130 Z" fill="#00f0ff"/>
+                <path d="M320 360 L323 367 L330 370 L323 373 L320 380 L317 373 L310 370 L317 367 Z" fill="#ffffff"/>
                 
-                <!-- Personaje VR Flotante -->
-                <g class="animate-float" transform="translate(320, 260) scale(1.1)">
-                    <path d="M60 140 C40 120, 20 100, -10 110 C-20 115, -10 130, 10 130 C30 130, 50 145, 70 160 Z" fill="#38bdf8"/>
-                    <path d="M140 130 C170 145, 200 130, 220 150 C225 155, 215 165, 200 160 C180 155, 150 160, 130 145 Z" fill="#38bdf8"/>
-                    <path d="M50 130 L150 120 L160 180 L40 190 Z" fill="#0284c7"/>
-                    <circle cx="100" cy="90" r="26" fill="#1e1b4b"/>
-                    <rect x="80" y="80" width="42" height="20" rx="8" fill="#f43f5e"/>
-                    <rect x="84" y="84" width="34" height="12" rx="5" fill="#38bdf8" opacity="0.9"/>
+                <!-- Floating VR Character -->
+                <g class="animate-float-slow" transform="translate(320, 240) scale(1.15)">
+                    <path d="M60 140 C40 120, 20 100, -10 110 C-20 115, -10 130, 10 130 C30 130, 50 145, 70 160 Z" fill="#00f0ff"/>
+                    <path d="M140 130 C170 145, 200 130, 220 150 C225 155, 215 165, 200 160 C180 155, 150 160, 130 145 Z" fill="#00f0ff"/>
+                    <path d="M50 130 L150 120 L160 180 L40 190 Z" fill="#6b00d7"/>
+                    <circle cx="100" cy="90" r="28" fill="#0f0c22"/>
+                    <rect x="78" y="78" width="44" height="22" rx="9" fill="#ff007f"/>
+                    <rect x="82" y="82" width="36" height="14" rx="6" fill="#00f0ff" opacity="0.95"/>
                 </g>
 
                 <defs>
-                    <linearGradient id="academium-grad-dark" x1="200" y1="50" x2="680" y2="650" gradientUnits="userSpaceOnUse">
-                        <stop offset="0%" stop-color="#6b00d7" stop-opacity="0.7" />
-                        <stop offset="50%" stop-color="#4c0099" stop-opacity="0.8" />
-                        <stop offset="100%" stop-color="#1e0040" stop-opacity="0.9" />
+                    <linearGradient id="academium-futuristic" x1="200" y1="50" x2="680" y2="650" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#a824fd" />
+                        <stop offset="50%" stop-color="#6b00d7" />
+                        <stop offset="100%" stop-color="#0a0518" />
                     </linearGradient>
                 </defs>
             </svg>
@@ -130,321 +176,942 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- HEADER ACADEMIUM PRO -->
+    <!-- TOP HEADER NAVBAR -->
     <!-- ========================================== -->
-    <header class="bg-[#5b00b7]/80 backdrop-blur-md text-white shadow-xl sticky top-0 z-50 border-b border-purple-500/20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between relative z-10">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-purple-300 font-bold text-xl shadow-inner">
+    <header class="sticky top-0 z-50 glass-panel border-b border-purple-500/20 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Logo & Secret Easter Egg Trigger -->
+            <div class="flex items-center space-x-3.5">
+                <div id="secret-logo-trigger" onclick="abrirModalClave()" class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 via-brand-500 to-cyber-neon hover:scale-105 flex items-center justify-center text-white font-black text-2xl cursor-pointer transition-all duration-300 active:scale-90 shadow-[0_0_25px_rgba(107,0,215,0.7)] border border-white/30" title="EduSync Easter Egg (Secret Hub)">
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
-                <div class="flex items-center gap-2">
-                    <span class="font-black text-xl tracking-tight text-white">Academium</span>
-                    <span class="text-[11px] bg-purple-500/30 text-purple-200 border border-purple-400/30 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">Feedback ABP</span>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-space font-black text-2xl tracking-tight text-white drop-shadow-[0_2px_12px_rgba(255,255,255,0.4)]">Academium</span>
+                        <span class="text-[10px] bg-gradient-to-r from-brand-500 to-cyber-neon text-slate-950 px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider shadow-md">EduSync PRO</span>
+                    </div>
+                    <p class="text-[10px] text-purple-300 font-semibold tracking-wide">Plataforma Institucional de Coordinación</p>
                 </div>
             </div>
-            
-            <div class="flex items-center space-x-4">
-                <span class="text-xs font-black text-amber-300 tracking-wider hover:text-amber-200 cursor-pointer uppercase py-1.5 px-3 rounded.xl hover:bg-white/10 transition flex items-center gap-1.5 border border-amber-300/20">
-                    <i class="fa-solid fa-house text-xs"></i> INICIO
-                </span>
+
+            <!-- Header Controls: Sound Engine Toggle, Firebase Cloud Status, Home Reset -->
+            <div class="flex items-center space-x-3">
+                
+                <!-- Master Sound Engine Toggle -->
+                <button id="sound-toggle-btn" onclick="toggleSoundEngine()" class="btn-touch w-11 h-11 rounded-2xl bg-purple-950/80 border border-purple-500/40 text-cyber-neon hover:bg-purple-900/80 transition flex items-center justify-center shadow-lg group relative" title="Efectos de Sonido Web Audio API">
+                    <i id="sound-icon" class="fa-solid fa-volume-high text-base group-hover:scale-110 transition-transform"></i>
+                    <span id="sound-indicator" class="absolute -top-1 -right-1 w-3 h-3 bg-cyber-emerald rounded-full border-2 border-slate-950"></span>
+                </button>
+
+                <!-- Firebase Sync Status Badge -->
+                <div id="cloud-status" class="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 backdrop-blur-md">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Firebase Live Sync
+                </div>
+
+                <!-- Home Reload Button -->
+                <button onclick="masterAudio.playClick(); location.reload();" class="btn-touch text-xs font-space font-bold text-amber-300 hover:text-amber-200 tracking-wider uppercase py-2.5 px-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/15 transition shadow-sm flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-right text-xs"></i>
+                    <span class="hidden sm:inline">INICIO</span>
+                </button>
             </div>
         </div>
     </header>
 
     <!-- ========================================== -->
-    <!-- MAIN: CONTENEDOR DE LA ENCUESTA -->
+    <!-- TAB NAVIGATION BAR -->
     <!-- ========================================== -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 flex items-center justify-start relative z-10">
-        
-        <div class="w-full max-w-md glass-card rounded-3xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
+    <nav class="sticky top-20 z-40 glass-panel border-b border-purple-500/10 py-2.5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-3 overflow-x-auto p-1 no-scrollbar">
+                
+                <button onclick="switchTab('calendar')" id="tab-btn-calendar" class="tab-btn nav-active btn-touch py-3.5 px-5 rounded-2xl inline-flex items-center gap-2.5 text-xs sm:text-sm font-bold transition-all duration-300 whitespace-nowrap">
+                    <i class="fa-solid fa-calendar-days text-sm"></i> Calendario Anti-Saturación
+                </button>
+
+                <button onclick="switchTab('minutas')" id="tab-btn-minutas" class="tab-btn btn-touch text-purple-200 hover:text-white hover:bg-white/5 py-3.5 px-5 rounded-2xl inline-flex items-center gap-2.5 text-xs sm:text-sm font-bold transition-all duration-300 whitespace-nowrap">
+                    <i class="fa-solid fa-clipboard-check text-sm"></i> Gestor de Minutas y Acuerdos
+                </button>
+
+                <button onclick="switchTab('canales')" id="tab-btn-canales" class="tab-btn btn-touch text-purple-200 hover:text-white hover:bg-white/5 py-3.5 px-5 rounded-2xl inline-flex items-center gap-2.5 text-xs sm:text-sm font-bold transition-all duration-300 whitespace-nowrap">
+                    <i class="fa-solid fa-network-wired text-sm text-cyber-pink"></i> Matriz de Canales Oficiales
+                </button>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========================================== -->
+    <!-- MAIN CONTENT AREA -->
+    <!-- ========================================== -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 relative z-10">
+
+        <!-- ========================================== -->
+        <!-- TAB 1: CALENDARIO ANTI-SATURACIÓN -->
+        <!-- ========================================== -->
+        <section id="tab-calendar" class="tab-content space-y-6">
             
-            <!-- Encabezado del Formulario -->
-            <div class="text-center space-y-1.5 border-b border-purple-500/20 pb-5">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-[11px] font-semibold mb-1">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Telemetría & Feedback Sincronizado
+            <!-- Controls Bar -->
+            <div class="glass-panel rounded-3xl p-6 border border-purple-500/30 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 shadow-2xl">
+                <div>
+                    <h2 class="font-space font-extrabold text-white text-xl sm:text-2xl flex items-center gap-2">
+                        Portal Académico <span class="bg-gradient-to-r from-brand-500 via-cyber-neon to-cyber-pink bg-clip-text text-transparent">EduSync</span>
+                    </h2>
+                    <p class="text-xs text-purple-300 mt-1 flex items-center gap-2">
+                        <span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                        Algoritmo de Protección Escolar: <span class="text-amber-300 font-bold bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/30">Máximo 2 Evaluaciones Mayores / día</span>
+                    </p>
                 </div>
-                <h2 class="font-black text-2xl text-white tracking-tight">Evaluación <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">EduSync</span></h2>
-                <p class="text-xs text-slate-400 font-medium">Prototipo ABP 2026 - Soluciones Integrales OMNISOFT</p>
+
+                <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-bold text-purple-200 uppercase tracking-wider">Curso:</label>
+                        <select id="filtro-grado" onchange="cambiarGrado()" class="bg-purple-950/90 border border-purple-500/40 text-white text-xs rounded-2xl px-4 py-3 font-bold outline-none focus:ring-2 focus:ring-cyber-neon transition shadow-inner">
+                            <option value="9no Grado">9no Grado</option>
+                            <option value="10mo Grado">10mo Grado</option>
+                            <option value="1er Bachillerato">1er Bachillerato</option>
+                        </select>
+                    </div>
+
+                    <button onclick="openAddModal()" class="btn-touch bg-gradient-to-r from-brand-600 via-brand-500 to-cyber-neon hover:brightness-110 text-white font-bold text-xs px-5 py-3.5 rounded-2xl shadow-[0_0_20px_rgba(107,0,215,0.5)] transition flex items-center gap-2">
+                        <i class="fa-solid fa-plus text-sm"></i> Programar Evaluación
+                    </button>
+                </div>
             </div>
 
-            <!-- FORMULARIO PRINCIPAL -->
-            <form id="formEncuesta" class="space-y-4 text-xs">
+            <!-- Weekly Responsive Grid Lunes a Viernes -->
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-5" id="calendar-grid">
+                <!-- Built dynamically via Firebase Sync -->
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: GESTOR DE MINUTAS Y ACUERDOS -->
+        <!-- ========================================== -->
+        <section id="tab-minutas" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                <!-- CAMPO 1: ROL -->
-                <div class="space-y-1.5">
-                    <label for="rol" class="block font-bold text-purple-200 flex items-center gap-1.5">
-                        <i class="fa-solid fa-user-gear text-purple-400"></i> 1. Rol en la institución:
-                    </label>
-                    <select id="rol" required onchange="playSelectSound()" class="w-full glass-input rounded-xl p-3 font-semibold outline-none focus:ring-2 focus:ring-purple-500 transition cursor-pointer">
-                        <option value="" class="bg-slate-900 text-slate-400">-- Seleccionar --</option>
-                        <option value="Docente" class="bg-slate-900 text-white">Docente / Profesor</option>
-                        <option value="Jurado" class="bg-slate-900 text-white">Evaluador / Jurado</option>
-                        <option value="Estudiante" class="bg-slate-900 text-white">Estudiante</option>
-                        <option value="Padre de familia / Representante" class="bg-slate-900 text-white">Padre de familia / Representante</option>
-                    </select>
+                <!-- Registration Form -->
+                <div class="glass-panel rounded-3xl p-6 border border-purple-500/30 lg:col-span-1 h-fit space-y-5">
+                    <h3 class="font-space font-extrabold text-white text-lg flex items-center gap-2 border-b border-purple-500/20 pb-3">
+                        <i class="fa-solid fa-pen-to-square text-cyber-neon"></i> Registrar Acuerdo
+                    </h3>
+
+                    <form onsubmit="guardarMinuta(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-purple-200 mb-1.5">Título del Acuerdo</label>
+                            <input type="text" id="minuta-titulo" required placeholder="Ej: Ajustar temario de examen final" class="w-full bg-purple-950/70 border border-purple-500/40 rounded-2xl text-xs p-3.5 text-white placeholder-purple-400 font-medium outline-none focus:ring-2 focus:ring-cyber-neon transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-purple-200 mb-1.5">Docente Responsable</label>
+                            <select id="minuta-responsable" class="w-full bg-purple-950/70 border border-purple-500/40 rounded-2xl text-xs p-3.5 text-white font-bold outline-none focus:ring-2 focus:ring-cyber-neon transition">
+                                <option value="Arianna">Arianna</option>
+                                <option value="Jorge">Jorge</option>
+                                <option value="Sury">Sury</option>
+                                <option value="Sergio">Sergio</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn-touch w-full bg-gradient-to-r from-brand-600 to-brand-500 hover:to-cyber-neon text-white hover:text-slate-950 text-xs font-bold py-4 rounded-2xl shadow-[0_0_20px_rgba(107,0,215,0.4)] transition">
+                            <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Guardar en la Nube
+                        </button>
+                    </form>
                 </div>
 
-                <!-- CAMPO 2: CALIFICACIÓN ESTRELLAS -->
-                <div class="space-y-1.5">
-                    <label class="block font-bold text-purple-200 flex items-center gap-1.5">
-                        <i class="fa-solid fa-star text-amber-400"></i> 2. Calificación del prototipo:
-                    </label>
-                    <div class="grid grid-cols-5 gap-2 bg-slate-900/60 p-2 rounded-2xl border border-purple-500/20">
-                        <div class="text-center">
-                            <input type="radio" name="nota" id="star-1" value="1" required class="hidden rating-star-input" onchange="playStarSound(1)">
-                            <label for="star-1" class="rating-star-label flex flex-col items-center justify-center p-2.5 rounded-xl cursor-pointer font-extrabold text-slate-300">
-                                <i class="fa-solid fa-star text-slate-500 mb-0.5 text-base transition"></i> 1★
-                            </label>
-                        </div>
-                        <div class="text-center">
-                            <input type="radio" name="nota" id="star-2" value="2" class="hidden rating-star-input" onchange="playStarSound(2)">
-                            <label for="star-2" class="rating-star-label flex flex-col items-center justify-center p-2.5 rounded-xl cursor-pointer font-extrabold text-slate-300">
-                                <i class="fa-solid fa-star text-slate-500 mb-0.5 text-base transition"></i> 2★
-                            </label>
-                        </div>
-                        <div class="text-center">
-                            <input type="radio" name="nota" id="star-3" value="3" class="hidden rating-star-input" onchange="playStarSound(3)">
-                            <label for="star-3" class="rating-star-label flex flex-col items-center justify-center p-2.5 rounded-xl cursor-pointer font-extrabold text-slate-300">
-                                <i class="fa-solid fa-star text-slate-500 mb-0.5 text-base transition"></i> 3★
-                            </label>
-                        </div>
-                        <div class="text-center">
-                            <input type="radio" name="nota" id="star-4" value="4" class="hidden rating-star-input" onchange="playStarSound(4)">
-                            <label for="star-4" class="rating-star-label flex flex-col items-center justify-center p-2.5 rounded-xl cursor-pointer font-extrabold text-slate-300">
-                                <i class="fa-solid fa-star text-slate-500 mb-0.5 text-base transition"></i> 4★
-                            </label>
-                        </div>
-                        <div class="text-center">
-                            <input type="radio" name="nota" id="star-5" value="5" class="hidden rating-star-input" onchange="playStarSound(5)">
-                            <label for="star-5" class="rating-star-label flex flex-col items-center justify-center p-2.5 rounded-xl cursor-pointer font-extrabold text-slate-300">
-                                <i class="fa-solid fa-star text-slate-500 mb-0.5 text-base transition"></i> 5★
-                            </label>
-                        </div>
+                <!-- Synced Agreements List -->
+                <div class="glass-panel rounded-3xl p-6 border border-purple-500/30 lg:col-span-2 space-y-4">
+                    <h3 class="font-space font-extrabold text-white text-lg flex items-center gap-2 border-b border-purple-500/20 pb-3">
+                        <i class="fa-solid fa-list-check text-cyber-emerald"></i> Acuerdos Sincronizados en Tiempo Real
+                    </h3>
+                    
+                    <div id="lista-minutas" class="space-y-3">
+                        <!-- Rendered live via Firebase -->
                     </div>
                 </div>
 
-                <!-- CAMPO 3: MÓDULO MÁS ÚTIL -->
-                <div class="space-y-1.5">
-                    <label for="funcion" class="block font-bold text-purple-200 flex items-center gap-1.5">
-                        <i class="fa-solid fa-layer-group text-indigo-400"></i> 3. Módulo más útil:
-                    </label>
-                    <select id="funcion" required onchange="playSelectSound()" class="w-full glass-input rounded-xl p-3 font-semibold outline-none focus:ring-2 focus:ring-purple-500 transition cursor-pointer">
-                        <option value="" class="bg-slate-900 text-slate-400">-- Seleccionar --</option>
-                        <option value="Anti-Saturación" class="bg-slate-900 text-white">Calendario Anti-Saturación</option>
-                        <option value="Minutas" class="bg-slate-900 text-white">Gestor de Minutas y Acuerdos</option>
-                        <option value="Canales" class="bg-slate-900 text-white">Matriz de Canales Oficiales</option>
-                    </select>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: MATRIZ DE CANALES OFICIALES -->
+        <!-- ========================================== -->
+        <section id="tab-canales" class="tab-content hidden space-y-6">
+            <div class="glass-panel rounded-3xl p-8 border border-purple-500/30 space-y-8">
+                <div class="border-b border-purple-500/20 pb-6">
+                    <h3 class="font-space font-black text-white text-2xl flex items-center gap-3">
+                        <i class="fa-solid fa-network-wired text-cyber-pink"></i> Matriz de Canales Oficiales de Comunicación
+                    </h3>
+                    <p class="text-xs text-purple-300 mt-2 leading-relaxed max-w-3xl">
+                        Protocolo institucional de comunicación docente en EduSync para garantizar el descanso integral y eliminar la dispersión mediante chats no oficiales fuera del horario escolar.
+                    </p>
                 </div>
 
-                <!-- CAMPO 4: RECOMENDACIÓN -->
-                <div class="space-y-1.5">
-                    <label for="comentario" class="block font-bold text-purple-200 flex items-center gap-1.5">
-                        <i class="fa-solid fa-comment-dots text-pink-400"></i> 4. Recomendación o comentario:
-                    </label>
-                    <textarea id="comentario" rows="3" onfocus="playSelectSound()" placeholder="Escribe tu opinión o retroalimentación aquí..." class="w-full glass-input rounded-xl p-3 outline-none focus:ring-2 focus:ring-purple-500 transition placeholder:text-slate-500 resize-none"></textarea>
-                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Urgencias -->
+                    <div class="p-6 rounded-3xl bg-rose-950/40 border border-rose-500/40 space-y-4 relative overflow-hidden group hover:border-rose-400 transition shadow-lg">
+                        <div class="w-12 h-12 rounded-2xl bg-rose-500 text-white flex items-center justify-center text-xl font-bold shadow-[0_0_15px_rgba(244,63,94,0.5)]">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <h4 class="font-space font-bold text-white text-lg">Urgencias e Imprevistos</h4>
+                        <p class="text-xs text-rose-200 leading-relaxed">Vía exclusiva para eventos críticos que afecten directamente la jornada o la seguridad del plantel.</p>
+                        <div class="pt-2">
+                            <span class="inline-flex items-center gap-1.5 text-[11px] bg-rose-500/20 text-rose-300 px-3 py-1 rounded-full font-bold border border-rose-500/30">
+                                <i class="fa-solid fa-bolt text-rose-400"></i> Respuesta Inmediata
+                            </span>
+                        </div>
+                    </div>
 
-                <!-- BOTÓN SUBMIT -->
-                <button type="submit" id="btnSubmit" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-black py-4 rounded-xl shadow-lg shadow-purple-600/30 transition transform active:scale-95 flex items-center justify-center gap-2 mt-3 tracking-wider uppercase border border-purple-400/30">
-                    <i class="fa-solid fa-paper-plane text-amber-300"></i> Enviar respuesta
-                </button>
-            </form>
+                    <!-- Operaciones Diarias -->
+                    <div class="p-6 rounded-3xl bg-indigo-950/40 border border-indigo-500/40 space-y-4 relative overflow-hidden group hover:border-indigo-400 transition shadow-lg">
+                        <div class="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-xl font-bold shadow-[0_0_15px_rgba(79,70,229,0.5)]">
+                            <i class="fa-brands fa-microsoft"></i>
+                        </div>
+                        <h4 class="font-space font-bold text-white text-lg">Operaciones Diarias</h4>
+                        <p class="text-xs text-indigo-200 leading-relaxed">Canales oficiales en Microsoft Teams ordenados por departamento académico y asignatura.</p>
+                        <div class="pt-2">
+                            <span class="inline-flex items-center gap-1.5 text-[11px] bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full font-bold border border-indigo-500/30">
+                                <i class="fa-solid fa-clock text-indigo-400"></i> Solo Horario Laboral
+                            </span>
+                        </div>
+                    </div>
 
-            <!-- MENSAJE DE ÉXITO HIGH-TECH -->
-            <div id="mensaje" class="hidden text-center p-6 bg-emerald-950/60 border border-emerald-500/40 rounded-2xl text-emerald-200 space-y-3 backdrop-blur-md">
-                <div class="w-14 h-14 bg-emerald-500/20 text-emerald-400 border border-emerald-400/30 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow-lg shadow-emerald-500/20 animate-bounce">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-                <div class="space-y-1">
-                    <h3 class="font-extrabold text-lg text-white">¡Evaluación Registrada!</h3>
-                    <p class="text-xs text-emerald-300 leading-relaxed">Muchas gracias por colaborar con tus respuestas y telemetría para el prototipo EduSync.</p>
-                </div>
-                <div class="pt-2">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-[10px] font-bold text-emerald-300 border border-emerald-400/30">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizado con Firebase Realtime DB
-                    </span>
+                    <!-- Solicitudes Formales -->
+                    <div class="p-6 rounded-3xl bg-emerald-950/40 border border-emerald-500/40 space-y-4 relative overflow-hidden group hover:border-emerald-400 transition shadow-lg">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-xl font-bold shadow-[0_0_15px_rgba(16,185,129,0.5)]">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <h4 class="font-space font-bold text-white text-lg">Solicitudes Formales</h4>
+                        <p class="text-xs text-emerald-200 leading-relaxed">Correo institucional para actas, permisos, justificativos e informes dirigidos a directivos.</p>
+                        <div class="pt-2">
+                            <span class="inline-flex items-center gap-1.5 text-[11px] bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full font-bold border border-emerald-500/30">
+                                <i class="fa-solid fa-calendar-check text-emerald-400"></i> Respuesta 24 a 48h
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-        </div>
+        </section>
 
     </main>
 
-    <!-- FOOTER ACADEMIUM -->
-    <footer class="mt-auto bg-[#090514]/90 border-t border-purple-500/20 py-4 text-center text-xs text-slate-500 relative z-10 backdrop-blur-md">
-        © 2026 Desarrollado por Soluciones Integrales OMNISOFT Cía. Ltda.
+    <!-- ========================================== -->
+    <!-- FOOTER WITH EASTER EGG LOCK LINK -->
+    <!-- ========================================== -->
+    <footer class="mt-auto glass-panel border-t border-purple-500/20 py-5 px-6 flex flex-col sm:flex-row justify-between items-center text-xs text-purple-300 relative z-10 gap-3">
+        <span onclick="abrirModalClave()" class="cursor-pointer text-[11px] text-purple-300 font-mono hover:text-cyber-neon transition select-none flex items-center gap-2 bg-white/5 px-3.5 py-2 rounded-xl border border-white/10 btn-touch" title="Clic para desbloquear el Secret Hub">
+            <i class="fa-solid fa-lock text-xs text-cyber-neon"></i> 6123 (EASTER EGG)
+        </span>
+        <span class="text-center font-medium">© 2026 Desarrollado por Soluciones Integrales OMNISOFT Cía. Ltda.</span>
     </footer>
 
     <!-- ========================================== -->
-    <!-- SINTETIZADOR MASTER AUDIO API & TELEMETRÍA -->
+    <!-- MODAL 1: PROGRAMAR EVALUACIÓN -->
+    <!-- ========================================== -->
+    <div id="add-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center z-50 p-4">
+        <div class="glass-panel rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-8 space-y-5 max-h-[90vh] overflow-y-auto border border-purple-500/40">
+            <div class="flex justify-between items-center border-b border-purple-500/20 pb-4">
+                <h3 class="font-space font-bold text-white text-base sm:text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-plus text-cyber-neon"></i> Programar Actividad Escolar
+                </h3>
+                <button onclick="closeAddModal()" class="text-purple-300 hover:text-white transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <form onsubmit="saveCalendarEvent(event)" class="space-y-4 text-xs">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold text-purple-200 mb-1.5">Día de la Semana</label>
+                        <select id="modal-dia" class="w-full bg-purple-950/80 border border-purple-500/40 rounded-2xl p-3 text-white outline-none focus:ring-2 focus:ring-cyber-neon">
+                            <option value="Lunes">Lunes</option>
+                            <option value="Martes">Martes</option>
+                            <option value="Miércoles">Miércoles</option>
+                            <option value="Jueves">Jueves</option>
+                            <option value="Viernes">Viernes</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-purple-200 mb-1.5">Tipo de Actividad</label>
+                        <select id="modal-tipo" class="w-full bg-purple-950/80 border border-purple-500/40 rounded-2xl p-3 text-white outline-none focus:ring-2 focus:ring-cyber-neon">
+                            <option value="Examen Mayor">🔴 Examen Mayor</option>
+                            <option value="Entrega de Proyecto">🟣 Entrega de Proyecto</option>
+                            <option value="Quiz / Prueba Corta">🟡 Quiz / Prueba Corta</option>
+                            <option value="Tarea Regular">🔵 Tarea Regular</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold text-purple-200 mb-1.5">Asignatura</label>
+                        <input type="text" id="modal-materia" required placeholder="Ej: Matemáticas" class="w-full bg-purple-950/80 border border-purple-500/40 rounded-2xl p-3 text-white placeholder-purple-400 outline-none focus:ring-2 focus:ring-cyber-neon">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-purple-200 mb-1.5">Docente Responsable</label>
+                        <select id="modal-docente" class="w-full bg-purple-950/80 border border-purple-500/40 rounded-2xl p-3 text-white outline-none focus:ring-2 focus:ring-cyber-neon">
+                            <option value="Sergio">Sergio</option>
+                            <option value="Arianna">Arianna</option>
+                            <option value="Jorge">Jorge</option>
+                            <option value="Sury">Sury</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-purple-200 mb-1.5">Descripción / Temario</label>
+                    <textarea id="modal-texto" rows="3" placeholder="Detalla los temas o instrucciones principales..." class="w-full bg-purple-950/80 border border-purple-500/40 rounded-2xl p-3 text-white placeholder-purple-400 outline-none focus:ring-2 focus:ring-cyber-neon"></textarea>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-purple-200 mb-1.5"><i class="fa-solid fa-paperclip text-purple-400 mr-1"></i> Adjuntar Enlace (Drive, PDF, etc.)</label>
+                    <input type="url" id="modal-archivo" placeholder="https://drive.google.com/..." class="w-full bg-purple-950/80 border border-purple-500/40 rounded-2xl p-3 text-white placeholder-purple-400 outline-none focus:ring-2 focus:ring-cyber-neon">
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-purple-500/20">
+                    <button type="button" onclick="closeAddModal()" class="btn-touch px-5 py-2.5 bg-white/10 text-white rounded-2xl font-bold hover:bg-white/20 transition">Cancelar</button>
+                    <button type="submit" class="btn-touch px-5 py-2.5 bg-gradient-to-r from-brand-600 to-cyber-neon text-white hover:text-slate-950 rounded-2xl font-bold shadow-lg transition">Guardar y Sincronizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 2: INGRESO PIN SECRETO (6123) -->
+    <!-- ========================================== -->
+    <div id="key-input-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center z-[90] p-4">
+        <div class="glass-panel border border-purple-500/40 rounded-3xl shadow-2xl max-w-xs w-full p-6 space-y-4 text-center">
+            <div class="w-14 h-14 rounded-2xl bg-brand-600/30 text-cyber-neon border border-cyber-neon/40 flex items-center justify-center mx-auto text-2xl shadow-[0_0_20px_rgba(0,240,255,0.4)]">
+                <i class="fa-solid fa-key"></i>
+            </div>
+            <div>
+                <h3 class="font-space font-extrabold text-white text-lg">Modo Secreto</h3>
+                <p class="text-xs text-purple-300 mt-1">Ingresa el PIN de seguridad:</p>
+            </div>
+            
+            <form onsubmit="verificarClaveIngresada(event)" class="space-y-4">
+                <input type="password" id="secret-pin-input" placeholder="****" maxlength="8" class="w-full bg-purple-950/90 border border-purple-500/50 text-center text-white text-2xl font-black tracking-widest rounded-2xl py-3 outline-none focus:ring-2 focus:ring-cyber-neon">
+                <p id="pin-error-msg" class="text-xs text-rose-400 hidden font-bold"><i class="fa-solid fa-circle-exclamation mr-1"></i> PIN incorrecto</p>
+                <div class="flex gap-2">
+                    <button type="button" onclick="cerrarModalClave()" class="btn-touch w-1/2 bg-white/10 hover:bg-white/20 text-white text-xs font-bold py-3 rounded-2xl transition">Cancelar</button>
+                    <button type="submit" class="btn-touch w-1/2 bg-gradient-to-r from-brand-600 to-cyber-neon text-white hover:text-slate-950 text-xs font-bold py-3 rounded-2xl shadow-lg transition">Acceder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 3: SECRET HUB (PSP & PS VITA) -->
+    <!-- ========================================== -->
+    <div id="secret-hub-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md hidden items-center justify-center z-[100] p-4">
+        <div class="glass-panel border border-purple-500/40 rounded-3xl shadow-2xl max-w-lg w-full p-6 text-center space-y-5 relative max-h-[85vh] flex flex-col justify-between">
+            
+            <button onclick="cerrarSecretHub()" class="absolute top-4 right-4 text-purple-300 hover:text-white text-xl transition"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div class="space-y-2 pt-2">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-brand-600 to-cyber-neon text-slate-950 flex items-center justify-center mx-auto text-3xl shadow-[0_0_25px_rgba(0,240,255,0.6)] font-bold">
+                    <i class="fa-solid fa-gamepad"></i>
+                </div>
+                <div>
+                    <h3 class="font-space font-extrabold text-white text-xl tracking-wide">Modo Secreto Desbloqueado</h3>
+                    <p class="text-xs text-purple-300 mt-1">Acceso directo a consolas portátiles y almacenamiento de juegos:</p>
+                </div>
+            </div>
+            
+            <div class="space-y-4 overflow-y-auto pr-1 text-left my-2">
+                
+                <!-- PSP -->
+                <div class="p-4 rounded-2xl bg-purple-950/50 border border-purple-500/30 space-y-3">
+                    <div class="flex items-center gap-2 border-b border-purple-500/20 pb-2">
+                        <i class="fa-solid fa-compact-disc text-cyber-neon text-base"></i>
+                        <h4 class="font-space font-extrabold text-white text-xs sm:text-sm uppercase tracking-wider">PlayStation Portable (PSP)</h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <a href="https://root-hunter.github.io/ppsspp-web/?runtime-isolation=1794243516609" target="_blank" onclick="masterAudio.playClick()" class="btn-touch w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 px-3 rounded-2xl shadow transition flex items-center justify-between text-xs group">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-play text-amber-300"></i> Emulador PPSSPP Web
+                            </span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-70 group-hover:opacity-100"></i>
+                        </a>
+
+                        <a href="https://drive.google.com/drive/folders/1g4eZ0z_F2PBJqT6pLJtlui4ojiYMc0kV?usp=sharing" target="_blank" onclick="masterAudio.playClick()" class="btn-touch w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-3 rounded-2xl shadow transition flex items-center justify-between text-xs group">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-folder-open text-emerald-200"></i> Carpeta Juegos PSP (.ISO)
+                            </span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-70 group-hover:opacity-100"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- PS VITA -->
+                <div class="p-4 rounded-2xl bg-indigo-950/50 border border-indigo-500/30 space-y-3">
+                    <div class="flex items-center gap-2 border-b border-indigo-500/20 pb-2">
+                        <i class="fa-solid fa-gamepad text-cyber-pink text-base"></i>
+                        <h4 class="font-space font-extrabold text-white text-xs sm:text-sm uppercase tracking-wider">PlayStation Vita (PS VITA)</h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button type="button" onclick="abrirEmuladorVita()" class="btn-touch w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-3 rounded-2xl shadow transition flex items-center justify-between text-xs cursor-pointer group">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-window-restore text-indigo-200"></i> Emulador Vita (Iframe)
+                            </span>
+                            <i class="fa-solid fa-chevron-right text-[10px] opacity-70 group-hover:opacity-100"></i>
+                        </button>
+
+                        <a href="https://drive.google.com/drive/folders/1cgdD_j5xbQv70VnpK-QlUx1pNVTz_28z?usp=sharing" target="_blank" onclick="masterAudio.playClick()" class="btn-touch w-full bg-purple-900 hover:bg-purple-800 text-white font-bold py-3 px-3 rounded-2xl shadow transition flex items-center justify-between text-xs group">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-folder-open text-purple-300"></i> Carpeta Juegos PS Vita
+                            </span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-70 group-hover:opacity-100"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pt-2 border-t border-purple-500/20 text-center">
+                <button type="button" onclick="cerrarSecretHub()" class="btn-touch bg-white/10 hover:bg-white/20 text-white text-xs font-bold py-2.5 px-6 rounded-2xl transition">
+                    Cerrar Panel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 4: EMULADOR PS VITA (VITASLOP IFRAME) -->
+    <!-- ========================================== -->
+    <div id="vita-emulator-modal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md hidden items-center justify-center z-[110] p-2 sm:p-6">
+        <div class="bg-slate-900 border border-purple-500/40 rounded-3xl shadow-2xl max-w-6xl w-full h-[90vh] flex flex-col overflow-hidden relative">
+            <div class="bg-slate-950 px-5 py-3.5 border-b border-purple-500/30 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <span class="w-3 h-3 rounded-full bg-cyber-neon animate-pulse"></span>
+                    <h3 class="font-space font-bold text-white text-xs sm:text-base tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-gamepad text-cyber-pink"></i> PS Vita Web Emulator (Vitaslop Player)
+                    </h3>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="https://cretz.github.io/vitaslop/" target="_blank" onclick="masterAudio.playClick()" class="btn-touch bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold px-3.5 py-1.5 rounded-2xl shadow transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> <span class="hidden sm:inline">Pestaña Nueva</span>
+                    </a>
+                    <button onclick="cerrarEmuladorVita()" class="text-purple-300 hover:text-white text-xl transition"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+
+            <div class="relative w-full flex-1 bg-black overflow-hidden">
+                <iframe id="vita-iframe" src="about:blank" class="w-full h-full border-0" allow="cross-origin-isolated; autoplay; fullscreen; gamepad; clipboard-read; clipboard-write; acceleration; gyroscope" sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 5: CUSTOM ANTI-SATURATION WARNING -->
+    <!-- ========================================== -->
+    <div id="anti-sat-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md hidden items-center justify-center z-[120] p-4">
+        <div class="glass-panel border-2 border-amber-500/60 rounded-3xl shadow-[0_0_50px_rgba(245,158,11,0.3)] max-w-md w-full p-6 text-center space-y-4">
+            <div class="w-16 h-16 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/50 flex items-center justify-center mx-auto text-3xl animate-bounce shadow-[0_0_20px_rgba(245,158,11,0.4)]">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div>
+                <h3 class="font-space font-extrabold text-amber-300 text-xl tracking-wide">⚠️ ALERTA ANTI-SATURACIÓN</h3>
+                <p id="anti-sat-text" class="text-xs text-purple-200 mt-2 leading-relaxed bg-black/40 p-4 rounded-2xl border border-white/10 text-left">
+                    <!-- Text inserted dynamically -->
+                </p>
+            </div>
+            <button onclick="cerrarAntiSatModal()" class="btn-touch w-full bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-black text-xs py-3.5 rounded-2xl shadow-lg transition">
+                ENTENDIDO Y COMPRENDIDO
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 6: CUSTOM CONFIRMATION DELETE MODAL -->
+    <!-- ========================================== -->
+    <div id="confirm-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md hidden items-center justify-center z-[120] p-4">
+        <div class="glass-panel border border-rose-500/50 rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4">
+            <div class="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/40 flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-trash"></i>
+            </div>
+            <h3 class="font-space font-bold text-white text-base">¿Confirmar Eliminación?</h3>
+            <p class="text-xs text-purple-300">Esta acción removerá el elemento sincronizado en Firebase Realtime DB.</p>
+            <div class="flex gap-3 pt-2">
+                <button type="button" onclick="cerrarConfirmModal(false)" class="btn-touch w-1/2 bg-white/10 text-white text-xs font-bold py-3 rounded-2xl">Cancelar</button>
+                <button type="button" onclick="cerrarConfirmModal(true)" class="btn-touch w-1/2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold py-3 rounded-2xl shadow-lg">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- WEB AUDIO SYNTHESIZER & SCRIPT LOGIC -->
     <!-- ========================================== -->
     <script>
-        // ----------------------------------------------------
-        // 1. MASTER WEB AUDIO API SYNTHESIZER (CERO ARCHIVOS)
-        // ----------------------------------------------------
-        let audioCtx = null;
-
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // ------------------------------------------
+        // 1. BULLETPROOF WEB AUDIO SYNTHESIZER ENGINE
+        // ------------------------------------------
+        class MasterAudioEngine {
+            constructor() {
+                this.ctx = null;
+                this.enabled = true;
+                this.isUnlocked = false;
             }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        }
 
-        function playSelectSound() {
-            try {
-                initAudio();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(550, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(320, audioCtx.currentTime + 0.04);
-                gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.04);
-            } catch(e){}
-        }
-
-        function playStarSound(val) {
-            try {
-                initAudio();
-                const baseFrequencies = [293.66, 369.99, 440.00, 554.37, 659.25]; // D4, F#4, A4, C#5, E5
-                const freq = baseFrequencies[val - 1] || 440;
-                
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = val === 5 ? 'triangle' : 'sine';
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.18);
-                
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.18);
-
-                // Brillo especial para 5 Estrellas
-                if (val === 5) {
-                    setTimeout(() => {
-                        const sparkOsc = audioCtx.createOscillator();
-                        const sparkGain = audioCtx.createGain();
-                        sparkOsc.type = 'sine';
-                        sparkOsc.frequency.setValueAtTime(1318.51, audioCtx.currentTime); // E6
-                        sparkGain.gain.setValueAtTime(0.12, audioCtx.currentTime);
-                        sparkGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
-                        sparkOsc.connect(sparkGain);
-                        sparkGain.connect(audioCtx.destination);
-                        sparkOsc.start();
-                        sparkOsc.stop(audioCtx.currentTime + 0.25);
-                    }, 80);
+            // Universal unlocker called on any user gesture across the window
+            init() {
+                if (!this.ctx) {
+                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContextClass) {
+                        this.ctx = new AudioContextClass();
+                    }
                 }
-            } catch(e){}
-        }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+                this.isUnlocked = true;
+            }
 
-        function playSuccessSound() {
-            try {
-                initAudio();
-                const now = audioCtx.currentTime;
-                // Acorde Triunfal EduSync: A4 -> C#5 -> E5 -> A5
-                const notes = [440, 554.37, 659.25, 880];
-                notes.forEach((freq, idx) => {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
+            playClick() {
+                if (!this.enabled) return;
+                this.init();
+                try {
+                    const now = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    const filter = this.ctx.createBiquadFilter();
+
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, now + (idx * 0.07));
-                    gain.gain.setValueAtTime(0.2, now + (idx * 0.07));
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + (idx * 0.07) + 0.35);
+                    osc.frequency.setValueAtTime(900, now);
+                    osc.frequency.exponentialRampToValueAtTime(150, now + 0.04);
+
+                    filter.type = 'highpass';
+                    filter.frequency.setValueAtTime(800, now);
+
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+
+                    osc.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(now);
+                    osc.stop(now + 0.04);
+                } catch(e){}
+            }
+
+            playModal() {
+                if (!this.enabled) return;
+                this.init();
+                try {
+                    const now = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(320, now);
+                    osc.frequency.exponentialRampToValueAtTime(950, now + 0.12);
+
+                    gain.gain.setValueAtTime(0.22, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
                     osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(now + (idx * 0.07));
-                    osc.stop(now + (idx * 0.07) + 0.35);
-                });
-            } catch(e){}
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } catch(e){}
+            }
+
+            playSuccess() {
+                if (!this.enabled) return;
+                this.init();
+                try {
+                    const now = this.ctx.currentTime;
+                    const notes = [523.25, 659.25, 783.99, 987.77, 1046.50]; // C5, E5, G5, B5, C6
+                    notes.forEach((freq, i) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, now + (i * 0.04));
+
+                        gain.gain.setValueAtTime(0.15, now + (i * 0.04));
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + (i * 0.04) + 0.28);
+
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+
+                        osc.start(now + (i * 0.04));
+                        osc.stop(now + (i * 0.04) + 0.28);
+                    });
+                } catch(e){}
+            }
+
+            playWarning() {
+                if (!this.enabled) return;
+                this.init();
+                try {
+                    const now = this.ctx.currentTime;
+                    // Dual oscillator for deep sub warning thud
+                    const osc1 = this.ctx.createOscillator();
+                    const osc2 = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+
+                    osc1.type = 'sawtooth';
+                    osc1.frequency.setValueAtTime(160, now);
+                    osc1.frequency.linearRampToValueAtTime(90, now + 0.25);
+
+                    osc2.type = 'square';
+                    osc2.frequency.setValueAtTime(240, now);
+                    osc2.frequency.linearRampToValueAtTime(110, now + 0.25);
+
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+                    osc1.connect(gain);
+                    osc2.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc1.start(now);
+                    osc2.start(now);
+                    osc1.stop(now + 0.3);
+                    osc2.stop(now + 0.3);
+                } catch(e){}
+            }
+
+            playSecret() {
+                if (!this.enabled) return;
+                this.init();
+                try {
+                    const now = this.ctx.currentTime;
+                    const arpeggio = [440, 554.37, 659.25, 880, 1108.73, 1318.51, 1760];
+                    arpeggio.forEach((freq, i) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+
+                        osc.type = 'square';
+                        osc.frequency.setValueAtTime(freq, now + (i * 0.045));
+
+                        gain.gain.setValueAtTime(0.12, now + (i * 0.045));
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + (i * 0.045) + 0.16);
+
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+
+                        osc.start(now + (i * 0.045));
+                        osc.stop(now + (i * 0.045) + 0.16);
+                    });
+                } catch(e){}
+            }
         }
 
-        function playErrorSound() {
-            try {
-                initAudio();
-                const now = audioCtx.currentTime;
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(200, now);
-                osc.frequency.setValueAtTime(140, now + 0.1);
-                gain.gain.setValueAtTime(0.25, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(now + 0.25);
-            } catch(e){}
-        }
+        const masterAudio = new MasterAudioEngine();
 
-        // Desbloquear audio en el primer toque/clic táctil en celular
-        ['touchstart', 'pointerdown', 'click'].forEach(evt => {
-            document.addEventListener(evt, initAudio, { once: true });
+        // Attach global pointer listeners to unlock Web Audio API immediately on mobile tap/click
+        ['pointerdown', 'touchstart', 'click'].forEach(evtType => {
+            window.addEventListener(evtType, () => masterAudio.init(), { capture: true, passive: true });
         });
 
-        // ----------------------------------------------------
-        // 2. INTEGRACIÓN FIREBASE REALTIME DB & TELEMETRÍA
-        // ----------------------------------------------------
+        function toggleSoundEngine() {
+            masterAudio.enabled = !masterAudio.enabled;
+            const icon = document.getElementById('sound-icon');
+            const indicator = document.getElementById('sound-indicator');
+            
+            if (masterAudio.enabled) {
+                icon.className = 'fa-solid fa-volume-high text-base text-cyber-neon';
+                indicator.className = 'absolute -top-1 -right-1 w-3 h-3 bg-cyber-emerald rounded-full border-2 border-slate-950';
+                masterAudio.playClick();
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-base text-rose-400';
+                indicator.className = 'absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full border-2 border-slate-950';
+            }
+        }
+
+        // ------------------------------------------
+        // 2. FIREBASE REALTIME DB INTEGRATION
+        // ------------------------------------------
         const firebaseConfig = {
             databaseURL: "https://edusync-c85df-default-rtdb.firebaseio.com/"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        document.getElementById('formEncuesta').addEventListener('submit', function(e) {
-            e.preventDefault();
-            initAudio();
-            
-            const btn = document.getElementById('btnSubmit');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin text-amber-300"></i> Guardando telemetría...';
+        let currentGrado = "9no Grado";
+        let calendarDB = {};
+        let minutasDB = {};
+        const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
 
-            const notaSeleccionada = document.querySelector('input[name="nota"]:checked');
-
-            // Recopilación de metadatos técnicos del navegador y dispositivo
-            const esMóvil = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-            const resolucion = `${window.screen.width}x${window.screen.height}`;
-            const idioma = navigator.language || 'Desconocido';
-            const zonaHoraria = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Desconocida';
-            const orientacion = window.screen.orientation ? window.screen.orientation.type : 'N/A';
-
-            db.ref('encuestas').push({
-                // Datos del formulario
-                rol: document.getElementById('rol').value,
-                nota: notaSeleccionada ? notaSeleccionada.value : "N/A",
-                funcion: document.getElementById('funcion').value,
-                comentario: document.getElementById('comentario').value || "Sin comentarios",
-                fecha: new Date().toLocaleString(),
-                
-                // Metadatos de usabilidad del dispositivo
-                telemetria: {
-                    dispositivo: esMóvil ? "Móvil / Tablet" : "Escritorio / Laptop",
-                    resolucion: resolucion,
-                    idioma: idioma,
-                    zonaHoraria: zonaHoraria,
-                    orientacion: orientacion,
-                    userAgent: navigator.userAgent
-                }
-            }).then(() => {
-                playSuccessSound();
-                document.getElementById('formEncuesta').style.display = 'none';
-                document.getElementById('mensaje').classList.remove('hidden');
-            }).catch((err) => {
-                playErrorSound();
-                alert("Error al enviar la respuesta. Intenta de nuevo.");
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-paper-plane text-amber-300"></i> Enviar respuesta';
-            });
+        // Listen for Realtime Calendar Changes
+        db.ref('calendar').on('value', (snapshot) => {
+            calendarDB = snapshot.val() || {};
+            renderCalendar();
         });
+
+        // Listen for Realtime Minutas Changes
+        db.ref('minutas').on('value', (snapshot) => {
+            minutasDB = snapshot.val() || {};
+            renderMinutas();
+        });
+
+        // Tab Switcher
+        function switchTab(tabId) {
+            masterAudio.playClick();
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('nav-active');
+                btn.classList.add('text-purple-200', 'hover:text-white', 'hover:bg-white/5');
+            });
+            
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            activeBtn.classList.add('nav-active');
+            activeBtn.classList.remove('text-purple-200', 'hover:text-white', 'hover:bg-white/5');
+        }
+
+        // Grade Filter Change
+        function cambiarGrado() {
+            masterAudio.playClick();
+            currentGrado = document.getElementById('filtro-grado').value;
+            renderCalendar();
+        }
+
+        // Render Calendar UI
+        function renderCalendar() {
+            const container = document.getElementById('calendar-grid');
+            container.innerHTML = '';
+            
+            const gradoData = calendarDB[currentGrado] || {};
+
+            diasSemana.forEach(dia => {
+                const eventos = gradoData[dia] || [];
+                const examenesMayores = eventos.filter(e => e.tipo === 'Examen Mayor').length;
+                const isOverloaded = examenesMayores >= 2;
+
+                let eventsHtml = eventos.map((ev, index) => {
+                    let badgeStyle = 'bg-blue-500/20 text-blue-300 border-blue-500/30';
+                    let icon = 'fa-book';
+                    if (ev.tipo === 'Examen Mayor') { badgeStyle = 'bg-rose-500/30 text-rose-300 border-rose-500/50 font-bold'; icon = 'fa-file-pen'; }
+                    else if (ev.tipo === 'Entrega de Proyecto') { badgeStyle = 'bg-purple-500/30 text-purple-300 border-purple-500/50'; icon = 'fa-diagram-project'; }
+                    else if (ev.tipo === 'Quiz / Prueba Corta') { badgeStyle = 'bg-amber-500/30 text-amber-300 border-amber-500/50'; icon = 'fa-clock'; }
+
+                    return `
+                        <div class="p-3.5 rounded-2xl bg-purple-950/60 border ${badgeStyle} text-xs space-y-2 shadow-md relative group hover:border-white/40 transition">
+                            <div class="flex justify-between items-start font-bold">
+                                <span class="flex items-center gap-1.5 text-white"><i class="fa-solid ${icon} text-cyber-neon"></i> ${ev.materia}</span>
+                                <button type="button" onclick="pedirConfirmacionDelete('calendar', '${dia}', ${index})" class="text-purple-400 hover:text-rose-400 transition p-1" title="Eliminar"><i class="fa-solid fa-trash text-xs"></i></button>
+                            </div>
+                            <div class="text-[10px] font-semibold opacity-90 tracking-wide uppercase">${ev.tipo || 'Evaluación'}</div>
+                            <p class="text-[11px] text-purple-200"><i class="fa-solid fa-user-tie text-cyber-neon/80 mr-1"></i> Prof. ${ev.docente}</p>
+                            ${ev.texto ? `<p class="text-[11px] text-slate-200 bg-black/50 p-2.5 rounded-xl mt-1 border border-white/10 leading-relaxed">${ev.texto}</p>` : ''}
+                            ${ev.archivo ? `<a href="${ev.archivo}" target="_blank" onclick="masterAudio.playClick()" class="inline-flex items-center gap-1.5 text-[11px] text-cyber-neon hover:underline font-bold mt-1 bg-cyber-neon/10 px-2.5 py-1 rounded-lg border border-cyber-neon/30"><i class="fa-solid fa-paperclip"></i> Ver Enlace Adjunto</a>` : ''}
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML += `
+                    <div class="glass-panel rounded-3xl p-5 shadow-xl flex flex-col justify-between space-y-4 border ${isOverloaded ? 'border-amber-500/70 ring-2 ring-amber-400/40' : 'border-purple-500/20'} transition">
+                        <div>
+                            <div class="flex items-center justify-between border-b border-purple-500/20 pb-3 mb-4">
+                                <h4 class="font-space font-extrabold text-white text-base">${dia}</h4>
+                                <span class="text-[10px] font-bold ${isOverloaded ? 'bg-amber-500/30 text-amber-300 border-amber-500/50' : 'bg-purple-900/60 text-purple-200 border-purple-500/30'} border px-2.5 py-0.5 rounded-full">${eventos.length} act.</span>
+                            </div>
+
+                            ${isOverloaded ? `
+                                <div class="mb-3 p-2.5 bg-amber-500/20 border border-amber-500/40 rounded-2xl text-[10px] font-bold text-amber-200 flex items-center gap-2 shadow-sm">
+                                    <i class="fa-solid fa-shield-halved text-amber-400 text-sm animate-pulse"></i> Límite Anti-Saturación (2/2 Exámenes)
+                                </div>
+                            ` : ''}
+
+                            <div class="space-y-3">
+                                ${eventsHtml || '<p class="text-[11px] text-purple-400/60 italic text-center py-6">Sin evaluaciones agendadas</p>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Add Event Modal Controls
+        function openAddModal() {
+            masterAudio.playModal();
+            document.getElementById('add-modal').classList.remove('hidden');
+            document.getElementById('add-modal').classList.add('flex');
+        }
+
+        function closeAddModal() {
+            masterAudio.playClick();
+            document.getElementById('add-modal').classList.add('hidden');
+            document.getElementById('add-modal').classList.remove('flex');
+        }
+
+        // Save Calendar Event & Anti-Saturation Logic
+        function saveCalendarEvent(e) {
+            e.preventDefault();
+            const dia = document.getElementById('modal-dia').value;
+            const tipo = document.getElementById('modal-tipo').value;
+            const materia = document.getElementById('modal-materia').value;
+            const docente = document.getElementById('modal-docente').value;
+            const texto = document.getElementById('modal-texto').value;
+            const archivo = document.getElementById('modal-archivo').value;
+
+            if (!calendarDB[currentGrado]) calendarDB[currentGrado] = {};
+            if (!calendarDB[currentGrado][dia]) calendarDB[currentGrado][dia] = [];
+
+            // Anti-Saturation Check
+            const currentExams = calendarDB[currentGrado][dia].filter(ev => ev.tipo === 'Examen Mayor').length;
+            if (tipo === 'Examen Mayor' && currentExams >= 2) {
+                masterAudio.playWarning();
+                mostrarAntiSatModal(`No es posible registrar un tercer 'Examen Mayor' para ${currentGrado} el día ${dia}.\n\nEl Algoritmo Anti-Saturación protege la salud mental y evita picos de estrés por sobrecarga de pruebas en una misma jornada.`);
+                return;
+            }
+
+            masterAudio.playSuccess();
+            calendarDB[currentGrado][dia].push({ tipo, materia, docente, texto, archivo });
+            db.ref('calendar/' + currentGrado).set(calendarDB[currentGrado]);
+
+            closeAddModal();
+            document.getElementById('modal-materia').value = '';
+            document.getElementById('modal-texto').value = '';
+            document.getElementById('modal-archivo').value = '';
+        }
+
+        // Custom Anti-Sat Alert Modal
+        function mostrarAntiSatModal(msg) {
+            document.getElementById('anti-sat-text').innerText = msg;
+            document.getElementById('anti-sat-modal').classList.remove('hidden');
+            document.getElementById('anti-sat-modal').classList.add('flex');
+        }
+
+        function cerrarAntiSatModal() {
+            masterAudio.playClick();
+            document.getElementById('anti-sat-modal').classList.add('hidden');
+            document.getElementById('anti-sat-modal').classList.remove('flex');
+        }
+
+        // Minutas Logic
+        function guardarMinuta(e) {
+            e.preventDefault();
+            const titulo = document.getElementById('minuta-titulo').value;
+            const responsable = document.getElementById('minuta-responsable').value;
+
+            db.ref('minutas').push({ 
+                titulo, 
+                responsable, 
+                fecha: new Date().toLocaleDateString('es-ES') 
+            }).then(() => {
+                masterAudio.playSuccess();
+            });
+
+            document.getElementById('minuta-titulo').value = '';
+        }
+
+        function renderMinutas() {
+            const container = document.getElementById('lista-minutas');
+            container.innerHTML = '';
+            
+            const keys = Object.keys(minutasDB);
+            if (keys.length === 0) {
+                container.innerHTML = '<p class="text-xs text-purple-400/60 italic py-6 text-center">No hay acuerdos registrados en la nube.</p>';
+                return;
+            }
+
+            keys.reverse().forEach(key => {
+                const item = minutasDB[key];
+                container.innerHTML += `
+                    <div class="p-4 bg-purple-950/50 rounded-2xl border border-purple-500/30 text-xs flex justify-between items-center shadow-md hover:border-purple-500/50 transition">
+                        <div>
+                            <p class="font-bold text-white text-sm">${item.titulo}</p>
+                            <p class="text-[11px] text-purple-300 mt-1"><i class="fa-solid fa-user-tag text-cyber-neon mr-1"></i>Responsable: <span class="font-bold text-white">${item.responsable}</span> • <i class="fa-regular fa-clock text-purple-400 mr-1"></i>${item.fecha || 'Reciente'}</p>
+                        </div>
+                        <button onclick="pedirConfirmacionDelete('minuta', '${key}')" class="text-purple-400 hover:text-rose-400 transition p-2"><i class="fa-solid fa-trash text-sm"></i></button>
+                    </div>
+                `;
+            });
+        }
+
+        // Delete confirmation modal handler (Replaces native confirm())
+        let pendingDeleteTarget = null;
+        function pedirConfirmacionDelete(type, param1, param2) {
+            masterAudio.playModal();
+            pendingDeleteTarget = { type, param1, param2 };
+            document.getElementById('confirm-modal').classList.remove('hidden');
+            document.getElementById('confirm-modal').classList.add('flex');
+        }
+
+        function cerrarConfirmModal(confirmed) {
+            masterAudio.playClick();
+            document.getElementById('confirm-modal').classList.add('hidden');
+            document.getElementById('confirm-modal').classList.remove('flex');
+            
+            if (confirmed && pendingDeleteTarget) {
+                if (pendingDeleteTarget.type === 'calendar') {
+                    const dia = pendingDeleteTarget.param1;
+                    const index = pendingDeleteTarget.param2;
+                    calendarDB[currentGrado][dia].splice(index, 1);
+                    db.ref('calendar/' + currentGrado).set(calendarDB[currentGrado]);
+                } else if (pendingDeleteTarget.type === 'minuta') {
+                    const key = pendingDeleteTarget.param1;
+                    db.ref('minutas/' + key).remove();
+                }
+            }
+            pendingDeleteTarget = null;
+        }
+
+        // Secret Mode PIN Modal (6123)
+        function abrirModalClave() {
+            masterAudio.playModal();
+            document.getElementById('secret-pin-input').value = '';
+            document.getElementById('pin-error-msg').classList.add('hidden');
+            document.getElementById('key-input-modal').classList.remove('hidden');
+            document.getElementById('key-input-modal').classList.add('flex');
+            setTimeout(() => document.getElementById('secret-pin-input').focus(), 100);
+        }
+
+        function cerrarModalClave() {
+            masterAudio.playClick();
+            document.getElementById('key-input-modal').classList.add('hidden');
+            document.getElementById('key-input-modal').classList.remove('flex');
+        }
+
+        function verificarClaveIngresada(e) {
+            e.preventDefault();
+            const pin = document.getElementById('secret-pin-input').value.trim();
+            if (pin === "6123") {
+                masterAudio.playSecret();
+                cerrarModalClave();
+                abrirSecretHub();
+            } else {
+                masterAudio.playWarning();
+                document.getElementById('pin-error-msg').classList.remove('hidden');
+                document.getElementById('secret-pin-input').value = '';
+                document.getElementById('secret-pin-input').focus();
+            }
+        }
+
+        function abrirSecretHub() {
+            document.getElementById('secret-hub-modal').classList.remove('hidden');
+            document.getElementById('secret-hub-modal').classList.add('flex');
+        }
+
+        function cerrarSecretHub() {
+            masterAudio.playClick();
+            document.getElementById('secret-hub-modal').classList.add('hidden');
+            document.getElementById('secret-hub-modal').classList.remove('flex');
+        }
+
+        function abrirEmuladorVita() {
+            masterAudio.playModal();
+            cerrarSecretHub();
+            const iframe = document.getElementById('vita-iframe');
+            if (!iframe.src || iframe.src === "" || iframe.src === window.location.href || iframe.src.includes("about:blank")) {
+                iframe.src = "https://cretz.github.io/vitaslop/";
+            }
+            document.getElementById('vita-emulator-modal').classList.remove('hidden');
+            document.getElementById('vita-emulator-modal').classList.add('flex');
+        }
+
+        function cerrarEmuladorVita() {
+            masterAudio.playClick();
+            document.getElementById('vita-emulator-modal').classList.add('hidden');
+            document.getElementById('vita-emulator-modal').classList.remove('flex');
+        }
     </script>
 </body>
 </html>
