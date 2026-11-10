@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full bg-slate-50">
+<html lang="es" class="h-full bg-white">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,150 +12,201 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: linear-gradient(135deg, #f8f5ff 0%, #f1e9fe 50%, #faf5ff 100%);
-            background-attachment: fixed;
+        body { font-family: 'Inter', sans-serif; }
+        .nav-link-active { border-bottom: 3px solid #6b00d7; color: #6b00d7; font-weight: 700; }
+        
+        /* Animación suave para los flotantes del espacio */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
         }
-        .nav-link-active { 
-            border-bottom: 3px solid #7c3aed; 
-            color: #6d28d9; 
-            font-weight: 700; 
-        }
-        .academium-blob {
-            position: fixed;
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.25;
-        }
+        .animate-float { animation: floatSlow 6s ease-in-out infinite; }
     </style>
 </head>
-<body class="h-full flex flex-col text-slate-800 relative overflow-x-hidden">
+<body class="h-full flex flex-col text-slate-800 bg-white relative min-h-screen overflow-x-hidden selection:bg-purple-500 selection:text-white">
 
-    <!-- Formas de fondo estilo Academium -->
-    <div class="academium-blob -top-24 -left-24 w-96 h-96 bg-purple-400 rounded-full blur-3xl"></div>
-    <div class="academium-blob top-1/2 -right-24 w-96 h-96 bg-indigo-400 rounded-full blur-3xl"></div>
+    <!-- FONDO ESTILO ACADEMIUM (ILUSTRACIÓN ESPACIAL EN DERECHA Y BLOB EN IZQUIERDA) -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <!-- Blob suave inferior izquierdo -->
+        <div class="absolute -bottom-20 -left-20 w-96 h-96 bg-[#f4e8ff] rounded-full blur-2xl opacity-80"></div>
+        
+        <!-- Contenedor Ilustración Ola Púrpura Espacial Derecha -->
+        <div class="absolute top-16 right-0 w-full lg:w-[55%] h-[calc(100vh-4rem)] flex justify-end items-center opacity-30 lg:opacity-100 transition-opacity">
+            <svg class="w-full h-full max-h-[850px] object-cover" viewBox="0 0 700 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Gran Mancha Morada Orgánica -->
+                <path d="M650 100C720 200 680 350 640 480C600 610 520 680 380 660C240 640 180 520 210 410C240 300 320 260 370 190C420 120 580 0 650 100Z" fill="url(#academium-grad)" />
+                
+                <!-- Anillos / Ondas de Viento Espacial -->
+                <path d="M250 280 Q 450 180, 620 320 T 500 550" stroke="white" stroke-width="6" stroke-linecap="round" opacity="0.35" fill="none"/>
+                <path d="M300 220 Q 500 140, 660 260" stroke="white" stroke-width="4" stroke-linecap="round" opacity="0.25" fill="none"/>
+                
+                <!-- Planetas y Cuerpos 3D flotantes -->
+                <circle cx="580" cy="180" r="35" fill="#e9d5ff" opacity="0.7"/>
+                <circle cx="595" cy="170" r="12" fill="#c084fc" opacity="0.9"/>
+                <circle cx="280" cy="490" r="22" fill="#f472b6" opacity="0.8"/>
+                <rect x="520" y="440" width="28" height="28" rx="6" transform="rotate(25 520 440)" fill="#60a5fa" opacity="0.8"/>
+                <rect x="340" y="240" width="20" height="20" rx="4" transform="rotate(12 340 240)" fill="#a7f3d0" opacity="0.7"/>
+                
+                <!-- Destellos / Estrellas -->
+                <path d="M480 120 L484 130 L494 134 L484 138 L480 148 L476 138 L466 134 L476 130 Z" fill="white" opacity="0.9"/>
+                <path d="M320 360 L323 367 L330 370 L323 373 L320 380 L317 373 L310 370 L317 367 Z" fill="white" opacity="0.8"/>
+                
+                <!-- Silueta / Avatar VR Flotante -->
+                <g class="animate-float" transform="translate(320, 260) scale(1.1)">
+                    <!-- Cuerpo / Brazo -->
+                    <path d="M60 140 C40 120, 20 100, -10 110 C-20 115, -10 130, 10 130 C30 130, 50 145, 70 160 Z" fill="#38bdf8"/>
+                    <path d="M140 130 C170 145, 200 130, 220 150 C225 155, 215 165, 200 160 C180 155, 150 160, 130 145 Z" fill="#38bdf8"/>
+                    <!-- Torso -->
+                    <path d="M50 130 L150 120 L160 180 L40 190 Z" fill="#0284c7"/>
+                    <!-- Cabeza y Visor VR -->
+                    <circle cx="100" cy="90" r="26" fill="#1e1b4b"/>
+                    <rect x="80" y="80" width="42" height="20" rx="8" fill="#f43f5e"/>
+                    <rect x="84" y="84" width="34" height="12" rx="5" fill="#38bdf8" opacity="0.9"/>
+                </g>
 
-    <!-- Header / Navbar inspirado en Academium -->
-    <header class="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-800 text-white shadow-md sticky top-0 z-50 border-b border-purple-700/50">
+                <!-- Degradado morado oficial de la mancha -->
+                <defs>
+                    <linearGradient id="academium-grad" x1="200" y1="50" x2="680" y2="650" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#8b5cf6" />
+                        <stop offset="45%" stop-color="#6b00d7" />
+                        <stop offset="100%" stop-color="#4c0099" />
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+    </div>
+
+    <!-- HEADER ESTILO ACADEMIUM (PÚRPURA VIVO CON BOTÓN INICIO AMARILLO) -->
+    <header class="bg-[#6b00d7] text-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between relative z-10">
-            <div class="flex items-center gap-3">
-                <div id="secret-logo-trigger" onclick="abrirModalClave()" class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-500 to-indigo-500 hover:from-purple-400 hover:to-indigo-400 flex items-center justify-center text-white cursor-pointer shadow-md transition transform active:scale-95" title="EduSync Portal">
-                    <i class="fa-solid fa-graduation-cap text-base"></i>
+            <!-- Logo e Identificación -->
+            <div class="flex items-center space-x-3">
+                <div id="secret-logo-trigger" onclick="abrirModalClave()" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white font-bold text-xl cursor-pointer transition active:scale-95 border border-white/20" title="EduSync Portal">
+                    <i class="fa-solid fa-graduation-cap"></i>
                 </div>
-                <div>
-                    <h1 class="font-bold text-lg leading-none tracking-tight text-white">EduSync <span class="text-xs bg-purple-500/30 text-purple-200 px-2.5 py-0.5 rounded-full border border-purple-400/30 font-normal">Académico</span></h1>
-                    <p class="text-[11px] text-purple-200/80 mt-0.5">Plataforma Integrada de Gestión</p>
+                <div class="flex items-center gap-2">
+                    <span class="font-extrabold text-xl tracking-tight text-white">Academium</span>
+                    <span class="text-xs bg-white/20 text-purple-100 px-2.5 py-0.5 rounded-full font-medium">EduSync Live</span>
                 </div>
             </div>
             
-            <div class="flex items-center gap-3">
-                <div class="flex items-center gap-2 bg-purple-950/60 px-3 py-1 rounded-full border border-purple-700/50 shadow-inner">
-                    <img src="https://jefferson.academium.ec/favicon.ico" alt="Academium" class="w-4 h-4 rounded-full bg-white p-0.5" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2991/2991106.png'">
-                    <span class="text-xs font-semibold text-purple-200">Academium</span>
-                </div>
-                <span id="cloud-status" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+            <!-- Acceso Rápido / Status -->
+            <div class="flex items-center space-x-4">
+                <span id="cloud-status" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-400/20 text-emerald-200 border border-emerald-400/30">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    Sincronizado
+                    Nube Conectada
                 </span>
+                <span class="text-xs font-black text-amber-300 tracking-wider hover:text-amber-200 cursor-pointer uppercase py-1 px-3 rounded hover:bg-white/10 transition">INICIO</span>
             </div>
         </div>
     </header>
 
-    <!-- Menú de Pestañas -->
-    <nav class="bg-white/90 backdrop-blur-md border-b border-purple-100 sticky top-16 z-40 shadow-sm">
+    <!-- NAVEGACIÓN SECUNDARIA / PESTAÑAS -->
+    <nav class="bg-white/80 backdrop-blur-md border-b border-purple-100 sticky top-16 z-40 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex space-x-8">
-                <button onclick="switchTab('calendar')" id="tab-btn-calendar" class="tab-btn nav-link-active py-3.5 px-1 inline-flex items-center gap-2 text-xs sm:text-sm font-semibold border-b-2 transition">
-                    <i class="fa-solid fa-calendar-days text-purple-600"></i> Calendario Académico
+                <button onclick="switchTab('calendar')" id="tab-btn-calendar" class="tab-btn nav-link-active py-4 px-1 inline-flex items-center gap-2 text-xs sm:text-sm font-bold border-b-2 transition">
+                    <i class="fa-solid fa-calendar-days text-[#6b00d7]"></i> Calendario Académico Anti-Saturación
                 </button>
-                <button onclick="switchTab('minutas')" id="tab-btn-minutas" class="tab-btn text-slate-500 hover:text-purple-700 py-3.5 px-1 inline-flex items-center gap-2 text-xs sm:text-sm font-medium border-b-2 border-transparent transition">
-                    <i class="fa-solid fa-clipboard-check"></i> Minutas y Acuerdos
+                <button onclick="switchTab('minutas')" id="tab-btn-minutas" class="tab-btn text-slate-500 hover:text-[#6b00d7] py-4 px-1 inline-flex items-center gap-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent transition">
+                    <i class="fa-solid fa-clipboard-check"></i> Gestor de Minutas y Acuerdos
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- Contenido Principal -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 relative z-10">
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 relative z-10">
 
-        <!-- TAB CALENDARIO -->
-        <section id="tab-calendar" class="tab-content space-y-5">
-            <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 border border-purple-100 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                <div class="flex items-center gap-3">
-                    <label class="text-xs font-bold text-purple-900">Curso:</label>
-                    <select id="filtro-grado" onchange="cambiarGrado()" class="bg-purple-50/60 border border-purple-200 text-purple-900 text-xs rounded-xl px-3 py-1.5 font-semibold outline-none focus:ring-2 focus:ring-purple-500">
-                        <option value="9no Grado">9no Grado</option>
-                        <option value="10mo Grado">10mo Grado</option>
-                        <option value="1er Bachillerato">1er Bachillerato</option>
-                    </select>
+        <!-- TAB 1: CALENDARIO -->
+        <section id="tab-calendar" class="tab-content space-y-6">
+            <div class="bg-white/90 backdrop-blur-md rounded-2xl p-5 border border-purple-100 shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="font-bold text-slate-900 text-lg">Ingreso <span class="text-[#a824fd]">Portal Académico</span></h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Límite activo: <span class="bg-amber-100 text-amber-800 font-semibold px-2 py-0.5 rounded-full">Máximo 2 evaluaciones mayores por día</span></p>
                 </div>
 
-                <button onclick="openAddModal()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-md transition flex items-center gap-2">
-                    <i class="fa-solid fa-plus"></i> Programar Evaluación
-                </button>
+                <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-bold text-slate-700">Curso:</label>
+                        <select id="filtro-grado" onchange="cambiarGrado()" class="bg-[#eef4ff] border border-blue-200 text-slate-800 text-xs rounded-xl px-3 py-2 font-semibold outline-none focus:ring-2 focus:ring-[#6b00d7]">
+                            <option value="9no Grado">9no Grado</option>
+                            <option value="10mo Grado">10mo Grado</option>
+                            <option value="1er Bachillerato">1er Bachillerato</option>
+                        </select>
+                    </div>
+
+                    <button onclick="openAddModal()" class="bg-[#6100e0] hover:bg-[#5200bd] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-2 active:scale-95">
+                        <i class="fa-solid fa-plus"></i> Programar Actividad
+                    </button>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="calendar-grid">
-                <!-- Se renderiza desde Firebase -->
+                <!-- Se renderiza mediante Firebase -->
             </div>
         </section>
 
-        <!-- TAB MINUTAS -->
+        <!-- TAB 2: MINUTAS -->
         <section id="tab-minutas" class="tab-content hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="bg-white/90 backdrop-blur-md rounded-2xl p-5 border border-purple-100 shadow-sm lg:col-span-1 h-fit">
-                    <h3 class="font-bold text-purple-950 text-sm mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-pen-to-square text-purple-600"></i> Nuevo Acuerdo
+                <div class="bg-white/90 backdrop-blur-md rounded-2xl p-5 border border-purple-100 shadow-md lg:col-span-1 h-fit">
+                    <h3 class="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-[#6b00d7]"></i> Registrar Acuerdo de Reunión
                     </h3>
-                    <form onsubmit="guardarMinuta(event)" class="space-y-3.5">
+                    <form onsubmit="guardarMinuta(event)" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-semibold text-purple-900 mb-1">Título del Acuerdo</label>
-                            <input type="text" id="minuta-titulo" required placeholder="Resumen del acuerdo..." class="w-full bg-purple-50/50 border border-purple-200 rounded-xl text-xs p-2.5 outline-none focus:ring-2 focus:ring-purple-500">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Título del Acuerdo</label>
+                            <input type="text" id="minuta-titulo" required placeholder="Ej: Definir temario final" class="w-full bg-[#eef4ff] border border-blue-200 rounded-xl text-xs p-3 outline-none focus:ring-2 focus:ring-[#6b00d7]">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-purple-900 mb-1">Responsable</label>
-                            <select id="minuta-responsable" class="w-full bg-purple-50/50 border border-purple-200 rounded-xl text-xs p-2.5 outline-none focus:ring-2 focus:ring-purple-500">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Responsable</label>
+                            <select id="minuta-responsable" class="w-full bg-[#eef4ff] border border-blue-200 rounded-xl text-xs p-3 outline-none focus:ring-2 focus:ring-[#6b00d7]">
                                 <option>Arianna</option>
                                 <option>Jorge</option>
                                 <option>Sury</option>
                                 <option>Sergio</option>
                             </select>
                         </div>
-                        <button type="submit" class="w-full bg-purple-700 hover:bg-purple-800 text-white text-xs font-semibold py-2.5 rounded-xl shadow-md transition">
-                            Guardar Registro
+                        <button type="submit" class="w-full bg-[#6100e0] hover:bg-[#5200bd] text-white text-xs font-bold py-3 rounded-xl shadow-md transition active:scale-95">
+                            Guardar en la Nube
                         </button>
                     </form>
                 </div>
 
-                <div class="bg-white/90 backdrop-blur-md rounded-2xl p-5 border border-purple-100 shadow-sm lg:col-span-2 space-y-4">
-                    <h3 class="font-bold text-purple-950 text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-indigo-600"></i> Acuerdos Registrados
+                <div class="bg-white/90 backdrop-blur-md rounded-2xl p-5 border border-purple-100 shadow-md lg:col-span-2 space-y-4">
+                    <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-600"></i> Acuerdos Sincronizados
                     </h3>
-                    <div id="lista-minutas" class="space-y-2.5"></div>
+                    <div id="lista-minutas" class="space-y-3"></div>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <!-- Modal Agregar Evaluación -->
-    <div id="add-modal" class="fixed inset-0 bg-purple-950/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto border border-purple-100">
+    <!-- FOOTER ESTILO ACADEMIUM -->
+    <footer class="mt-auto bg-white/80 border-t border-purple-100 py-4 text-center text-xs text-slate-500 relative z-10">
+        © 2026 Desarrollado por Soluciones Integrales OMNISOFT Cía. Ltda.
+    </footer>
+
+    <!-- MODAL AGREGAR EVALUACIÓN -->
+    <div id="add-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto border border-purple-100">
             <div class="flex justify-between items-center border-b border-purple-100 pb-3">
-                <h3 class="font-bold text-purple-950 text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-calendar-plus text-purple-600"></i> Nueva Actividad
+                <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-plus text-[#6b00d7]"></i> Programar Actividad Escolar
                 </h3>
-                <button onclick="closeAddModal()" class="text-slate-400 hover:text-purple-600"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             
             <form onsubmit="saveCalendarEvent(event)" class="space-y-3.5 text-xs">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-semibold text-purple-900 mb-1">Día</label>
-                        <select id="modal-dia" class="w-full bg-purple-50/50 border border-purple-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-purple-500">
+                        <label class="block font-bold text-slate-700 mb-1">Día de la Semana</label>
+                        <select id="modal-dia" class="w-full bg-[#eef4ff] border border-blue-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-[#6b00d7]">
                             <option value="Lunes">Lunes</option>
                             <option value="Martes">Martes</option>
                             <option value="Miércoles">Miércoles</option>
@@ -164,24 +215,24 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block font-semibold text-purple-900 mb-1">Tipo</label>
-                        <select id="modal-tipo" class="w-full bg-purple-50/50 border border-purple-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-purple-500">
-                            <option value="Examen Mayor">Examen Mayor</option>
-                            <option value="Entrega de Proyecto">Entrega de Proyecto</option>
-                            <option value="Quiz / Prueba Corta">Quiz / Prueba Corta</option>
-                            <option value="Tarea Regular">Tarea Regular</option>
+                        <label class="block font-bold text-slate-700 mb-1">Tipo de Actividad</label>
+                        <select id="modal-tipo" class="w-full bg-[#eef4ff] border border-blue-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-[#6b00d7]">
+                            <option value="Examen Mayor">🔴 Examen Mayor</option>
+                            <option value="Entrega de Proyecto">🟣 Entrega de Proyecto</option>
+                            <option value="Quiz / Prueba Corta">🟡 Quiz / Prueba Corta</option>
+                            <option value="Tarea Regular">🔵 Tarea Regular</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-semibold text-purple-900 mb-1">Materia</label>
-                        <input type="text" id="modal-materia" required placeholder="Ej: Matemáticas" class="w-full bg-purple-50/50 border border-purple-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-purple-500">
+                        <label class="block font-bold text-slate-700 mb-1">Asignatura</label>
+                        <input type="text" id="modal-materia" required placeholder="Ej: Matemáticas" class="w-full bg-[#eef4ff] border border-blue-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-[#6b00d7]">
                     </div>
                     <div>
-                        <label class="block font-semibold text-purple-900 mb-1">Docente</label>
-                        <select id="modal-docente" class="w-full bg-purple-50/50 border border-purple-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-purple-500">
+                        <label class="block font-bold text-slate-700 mb-1">Docente Responsable</label>
+                        <select id="modal-docente" class="w-full bg-[#eef4ff] border border-blue-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-[#6b00d7]">
                             <option value="Sergio">Sergio</option>
                             <option value="Arianna">Arianna</option>
                             <option value="Jorge">Jorge</option>
@@ -191,106 +242,104 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-purple-900 mb-1">Detalles / Indicaciones</label>
-                    <textarea id="modal-texto" rows="2" placeholder="Información sobre la evaluación..." class="w-full bg-purple-50/50 border border-purple-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                    <label class="block font-bold text-slate-700 mb-1">Descripción / Instrucciones</label>
+                    <textarea id="modal-texto" rows="3" placeholder="Detalla los temas del examen o las indicaciones de la entrega..." class="w-full bg-[#eef4ff] border border-blue-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-[#6b00d7]"></textarea>
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-purple-900 mb-1">Enlace adjunto (Drive / PDF)</label>
-                    <input type="url" id="modal-archivo" placeholder="https://..." class="w-full bg-purple-50/50 border border-purple-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-purple-500">
+                    <label class="block font-bold text-slate-700 mb-1"><i class="fa-solid fa-paperclip text-slate-400 mr-1"></i> Adjuntar Enlace (Drive, PDF, etc.)</label>
+                    <input type="url" id="modal-archivo" placeholder="https://drive.google.com/file/d/..." class="w-full bg-[#eef4ff] border border-blue-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-[#6b00d7]">
                 </div>
 
                 <div class="flex justify-end gap-2 pt-3 border-t border-purple-100">
-                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 bg-purple-100 text-purple-800 rounded-xl font-semibold">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold shadow-md">Guardar</button>
+                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl font-bold">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-[#6100e0] hover:bg-[#5200bd] text-white rounded-xl font-bold shadow-md">Guardar y Sincronizar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Autenticación Secret PIN -->
-    <div id="key-input-modal" class="fixed inset-0 bg-purple-950/70 backdrop-blur-md hidden items-center justify-center z-[90] p-4">
+    <!-- MODAL INGRESO DE CLAVE SECRETA -->
+    <div id="key-input-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm hidden items-center justify-center z-[90] p-4">
         <div class="bg-white border border-purple-200 rounded-2xl shadow-2xl max-w-xs w-full p-6 space-y-4 text-center">
-            <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 border border-purple-200 flex items-center justify-center mx-auto text-lg">
-                <i class="fa-solid fa-lock"></i>
+            <div class="w-12 h-12 rounded-2xl bg-purple-100 text-[#6b00d7] border border-purple-200 flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-key"></i>
             </div>
             <div>
-                <h3 class="font-bold text-purple-950 text-base">Modo Secreto</h3>
-                <p class="text-xs text-purple-600 mt-0.5">Ingresa el código PIN:</p>
+                <h3 class="font-bold text-slate-900 text-base">Modo Secreto</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Ingresa el código PIN para desbloquear:</p>
             </div>
             
             <form onsubmit="verificarClaveIngresada(event)" class="space-y-3">
-                <input type="password" id="secret-pin-input" placeholder="PIN..." maxlength="8" class="w-full bg-purple-50 border border-purple-200 text-center text-purple-950 font-bold text-lg tracking-widest rounded-xl py-2 outline-none focus:ring-2 focus:ring-purple-500">
+                <input type="password" id="secret-pin-input" placeholder="PIN..." maxlength="8" class="w-full bg-[#eef4ff] border border-blue-200 text-center text-slate-900 text-lg font-bold tracking-widest rounded-xl py-2 outline-none focus:ring-2 focus:ring-[#6b00d7]">
                 <p id="pin-error-msg" class="text-xs text-rose-600 hidden font-bold"><i class="fa-solid fa-circle-exclamation mr-1"></i> Código incorrecto</p>
                 <div class="flex gap-2">
-                    <button type="button" onclick="cerrarModalClave()" class="w-1/2 bg-slate-100 text-slate-700 text-xs font-semibold py-2 rounded-xl">Cancelar</button>
-                    <button type="submit" class="w-1/2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold py-2 rounded-xl shadow-md">Acceder</button>
+                    <button type="button" onclick="cerrarModalClave()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-xl">Cancelar</button>
+                    <button type="submit" class="w-1/2 bg-[#6100e0] hover:bg-[#5200bd] text-white text-xs font-bold py-2 rounded-xl shadow-md">Acceder</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Panel Secreto Hub Multi-Consola -->
-    <div id="secret-hub-modal" class="fixed inset-0 bg-purple-950/80 backdrop-blur-md hidden items-center justify-center z-[100] p-4">
-        <div class="bg-white border border-purple-200 rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-5 relative max-h-[90vh] overflow-y-auto">
-            <button onclick="cerrarSecretHub()" class="absolute top-4 right-4 text-purple-400 hover:text-purple-700 text-lg transition"><i class="fa-solid fa-xmark"></i></button>
+    <!-- MODAL PANEL SECRETO MULTI-CONSOLA (POST CLAVE 6123) -->
+    <div id="secret-hub-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center z-[100] p-4">
+        <div class="bg-white border border-purple-200 rounded-2xl shadow-2xl max-w-md w-full p-6 text-center space-y-5 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="cerrarSecretHub()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 text-xl transition"><i class="fa-solid fa-xmark"></i></button>
             
-            <div class="flex items-center gap-3 border-b border-purple-100 pb-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center text-lg shadow-md">
-                    <i class="fa-solid fa-gamepad"></i>
-                </div>
-                <div>
-                    <h3 class="font-bold text-purple-950 text-base">Modo Secreto Desbloqueado</h3>
-                    <p class="text-xs text-purple-600">Selecciona qué emulador abrir:</p>
-                </div>
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#6b00d7] to-[#a824fd] text-white flex items-center justify-center mx-auto text-2xl shadow-lg shadow-purple-500/30">
+                <i class="fa-solid fa-gamepad"></i>
             </div>
             
-            <div class="space-y-4">
+            <div>
+                <h3 class="font-bold text-slate-900 text-xl tracking-wide">Modo Secreto Desbloqueado</h3>
+                <p class="text-xs text-slate-500 mt-1">Selecciona qué deseas abrir:</p>
+            </div>
+            
+            <div class="space-y-4 pt-2">
                 <!-- PSP -->
                 <div class="space-y-2">
-                    <p class="text-xs font-bold text-purple-900 border-b border-purple-100 pb-1 flex items-center gap-1.5">
-                        <i class="fa-solid fa-compact-disc text-purple-600"></i> PlayStation Portable (PSP)
+                    <p class="text-xs font-bold text-slate-600 text-left border-b border-slate-100 pb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-compact-disc text-[#6b00d7]"></i> PlayStation Portable (PSP)
                     </p>
-                    <a href="https://root-hunter.github.io/ppsspp-web/?runtime-isolation=1794243516609" target="_blank" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-between text-xs sm:text-sm">
-                        <span><i class="fa-solid fa-arrow-up-right-from-square mr-2"></i> Abrir PPSSPP Web (Pestaña)</span>
-                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    <a href="https://root-hunter.github.io/ppsspp-web/?runtime-isolation=1794243516609" target="_blank" class="w-full bg-[#6100e0] hover:bg-[#5200bd] text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-3 text-xs sm:text-sm">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-base"></i> Abrir Emulador PPSSPP Web (Pestaña)
                     </a>
-                    <a href="https://drive.google.com/drive/folders/1g4eZ0z_F2PBJqT6pLJtlui4ojiYMc0kV?usp=sharing" target="_blank" class="w-full bg-purple-100 hover:bg-purple-200 text-purple-900 font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-between text-xs sm:text-sm">
-                        <span><i class="fa-solid fa-folder-open mr-2"></i> Carpeta Juegos PSP (.ISO)</span>
-                        <i class="fa-solid fa-external-link text-xs"></i>
+                    <a href="https://drive.google.com/drive/folders/1g4eZ0z_F2PBJqT6pLJtlui4ojiYMc0kV?usp=sharing" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-3 text-xs sm:text-sm">
+                        <i class="fa-solid fa-folder-open text-base"></i> Abrir Carpeta Juegos PSP (.ISO)
                     </a>
                 </div>
 
-                <!-- PS VITA -->
-                <div class="space-y-2 pt-2 border-t border-purple-100">
-                    <p class="text-xs font-bold text-purple-900 border-b border-purple-100 pb-1 flex items-center gap-1.5">
+                <!-- PS Vita -->
+                <div class="space-y-2 pt-1">
+                    <p class="text-xs font-bold text-slate-600 text-left border-b border-slate-100 pb-1 flex items-center gap-1.5">
                         <i class="fa-solid fa-gamepad text-indigo-600"></i> PlayStation Vita (PSVITA)
                     </p>
-                    <button type="button" onclick="abrirEmuladorVita()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-between text-xs sm:text-sm">
-                        <span><i class="fa-solid fa-play mr-2"></i> Abrir PS Vita Web (Iframe)</span>
-                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    <button type="button" onclick="abrirEmuladorVita()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-3 text-xs sm:text-sm">
+                        <i class="fa-solid fa-play text-base"></i> Abrir Emulador PS Vita Web (Iframe)
                     </button>
-                    <a href="https://drive.google.com/drive/folders/1cgdD_j5xbQv70VnpK-QlUx1pNVTz_28z?usp=sharing" target="_blank" class="w-full bg-purple-100 hover:bg-purple-200 text-purple-900 font-semibold py-2.5 px-4 rounded-xl transition flex items-center justify-between text-xs sm:text-sm">
-                        <span><i class="fa-solid fa-folder-open mr-2"></i> Carpeta Juegos PS Vita</span>
-                        <i class="fa-solid fa-external-link text-xs"></i>
+                    <a href="https://drive.google.com/drive/folders/1cgdD_j5xbQv70VnpK-QlUx1pNVTz_28z?usp=sharing" target="_blank" class="w-full bg-purple-900 hover:bg-purple-800 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-3 text-xs sm:text-sm">
+                        <i class="fa-solid fa-folder-open text-base"></i> Abrir Carpeta Juegos PS Vita
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Visor Iframe Emulador PS Vita -->
-    <div id="vita-emulator-modal" class="fixed inset-0 bg-purple-950/90 backdrop-blur-md hidden items-center justify-center z-[110] p-2 sm:p-6">
-        <div class="bg-purple-950 rounded-2xl border border-purple-800 shadow-2xl max-w-6xl w-full h-[88vh] flex flex-col overflow-hidden">
-            <div class="bg-purple-900 px-5 py-3 border-b border-purple-800 flex justify-between items-center">
-                <span class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
-                    <i class="fa-solid fa-gamepad text-purple-300"></i> PS Vita Web Emulator (Vitaslop)
-                </span>
+    <!-- MODAL EMULADOR PS VITA EN IFRAME -->
+    <div id="vita-emulator-modal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md hidden items-center justify-center z-[110] p-2 md:p-6">
+        <div class="bg-slate-900 border border-purple-900 rounded-2xl shadow-2xl max-w-6xl w-full h-[90vh] flex flex-col overflow-hidden relative">
+            <div class="bg-slate-800 px-6 py-3 border-b border-slate-700 flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <a href="https://cretz.github.io/vitaslop/" target="_blank" class="bg-purple-700 hover:bg-purple-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-external-link"></i> Abrir en Pestaña
+                    <span class="w-3 h-3 rounded-full bg-purple-500 animate-ping"></span>
+                    <h3 class="font-bold text-white text-base md:text-lg tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-gamepad text-purple-400"></i> PS Vita Web Emulator (Vitaslop)
+                    </h3>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="https://cretz.github.io/vitaslop/" target="_blank" class="bg-[#6100e0] hover:bg-[#5200bd] text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir en Nueva Pestaña
                     </a>
-                    <button onclick="cerrarEmuladorVita()" class="text-purple-300 hover:text-white text-xl transition px-2"><i class="fa-solid fa-xmark"></i></button>
+                    <button onclick="cerrarEmuladorVita()" class="text-slate-400 hover:text-white text-xl transition px-2"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
 
@@ -305,7 +354,7 @@
         </div>
     </div>
 
-    <!-- Firebase Script & App Logic -->
+    <!-- FIREBASE SCRIPT & LÓGICA DE LA APP -->
     <script>
         const firebaseConfig = {
             databaseURL: "https://edusync-c85df-default-rtdb.firebaseio.com/"
@@ -321,12 +370,14 @@
 
         const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
 
+        // Escuchar cambios en el calendario en Firebase
         db.ref('calendar').on('value', (snapshot) => {
             const data = snapshot.val();
             fullCalendarData = data || {};
             actualizarVistaGrado();
         });
 
+        // Escuchar cambios en minutas en Firebase
         db.ref('minutas').on('value', (snapshot) => {
             minutasRawData = snapshot.val() || {};
             renderMinutas();
@@ -372,42 +423,42 @@
                 const isOverloaded = examenesMayores >= 2;
 
                 let eventsHtml = eventos.map((ev, index) => {
-                    let badgeColor = 'bg-purple-50/80 border-purple-200 text-purple-900';
+                    let badgeColor = 'bg-blue-50 text-blue-900 border-blue-200';
                     let icon = 'fa-book';
-                    if (ev.tipo === 'Examen Mayor') { badgeColor = 'bg-rose-50 border-rose-200 text-rose-900'; icon = 'fa-file-pen'; }
-                    else if (ev.tipo === 'Entrega de Proyecto') { badgeColor = 'bg-indigo-50 border-indigo-200 text-indigo-900'; icon = 'fa-diagram-project'; }
-                    else if (ev.tipo === 'Quiz / Prueba Corta') { badgeColor = 'bg-amber-50 border-amber-200 text-amber-900'; icon = 'fa-clock'; }
+                    if (ev.tipo === 'Examen Mayor') { badgeColor = 'bg-rose-50 text-rose-900 border-rose-200'; icon = 'fa-file-pen'; }
+                    else if (ev.tipo === 'Entrega de Proyecto') { badgeColor = 'bg-purple-50 text-purple-900 border-purple-200'; icon = 'fa-diagram-project'; }
+                    else if (ev.tipo === 'Quiz / Prueba Corta') { badgeColor = 'bg-amber-50 text-amber-900 border-amber-200'; icon = 'fa-clock'; }
 
                     return `
-                        <div class="p-2.5 rounded-xl border ${badgeColor} text-xs space-y-1 relative shadow-sm">
-                            <div class="flex justify-between items-start font-bold">
+                        <div class="p-2.5 rounded-xl border ${badgeColor} text-xs space-y-1 shadow-sm relative group">
+                            <div class="flex justify-between items-center font-bold">
                                 <span class="flex items-center gap-1.5"><i class="fa-solid ${icon}"></i> ${ev.materia}</span>
-                                <button type="button" onclick="deleteEvent('${dia}', ${index})" class="text-slate-400 hover:text-rose-600 transition p-0.5" title="Eliminar"><i class="fa-solid fa-trash text-[11px]"></i></button>
+                                <button type="button" onclick="deleteEvent('${dia}', ${index})" class="text-slate-400 hover:text-rose-600 transition p-1 cursor-pointer" title="Eliminar"><i class="fa-solid fa-trash text-xs"></i></button>
                             </div>
-                            <div class="text-[10px] font-medium opacity-80">${ev.tipo || 'Evaluación'}</div>
-                            <p class="text-[10px] text-slate-600">Prof. ${ev.docente}</p>
-                            ${ev.texto ? `<p class="text-[10px] text-slate-700 bg-white/90 p-1.5 rounded-lg border border-purple-100 mt-1">${ev.texto}</p>` : ''}
-                            ${ev.archivo ? `<a href="${ev.archivo}" target="_blank" class="inline-flex items-center gap-1 text-[10px] text-purple-700 hover:underline font-bold mt-1"><i class="fa-solid fa-paperclip"></i> Adjunto</a>` : ''}
+                            <div class="text-[10px] font-semibold opacity-90">${ev.tipo || 'Evaluación'}</div>
+                            <p class="text-[10px] text-slate-600"><i class="fa-solid fa-user-tie"></i> Prof. ${ev.docente}</p>
+                            ${ev.texto ? `<p class="text-[10px] text-slate-700 bg-white/90 p-1.5 rounded-lg mt-1 border border-slate-200/50">${ev.texto}</p>` : ''}
+                            ${ev.archivo ? `<a href="${ev.archivo}" target="_blank" class="inline-flex items-center gap-1 text-[10px] text-[#6b00d7] hover:underline font-bold mt-1"><i class="fa-solid fa-paperclip"></i> Ver Adjunto</a>` : ''}
                         </div>
                     `;
                 }).join('');
 
                 container.innerHTML += `
-                    <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 border ${isOverloaded ? 'border-amber-400 bg-amber-50/40' : 'border-purple-100'} shadow-sm flex flex-col justify-between space-y-3">
+                    <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-md flex flex-col justify-between space-y-3 border ${isOverloaded ? 'border-amber-400 bg-amber-50/40' : 'border-purple-100'}">
                         <div>
-                            <div class="flex items-center justify-between border-b border-purple-100 pb-2 mb-2">
-                                <h4 class="font-bold text-purple-950 text-xs sm:text-sm">${dia}</h4>
-                                <span class="text-[10px] font-semibold text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full">${eventos.length}</span>
+                            <div class="flex items-center justify-between border-b border-purple-100 pb-2 mb-3">
+                                <h4 class="font-bold text-slate-800 text-sm">${dia}</h4>
+                                <span class="text-[10px] font-semibold text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full">${eventos.length} act.</span>
                             </div>
 
                             ${isOverloaded ? `
-                                <div class="mb-2 p-1.5 bg-amber-100 border border-amber-300 rounded-xl text-[10px] text-amber-900 font-bold flex items-center gap-1">
-                                    <i class="fa-solid fa-triangle-exclamation"></i> Límite alcanzado
+                                <div class="mb-3 p-1.5 bg-amber-100 border border-amber-300 rounded-xl text-[10px] font-bold text-amber-800 flex items-center gap-1">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> Límite de exámenes alcanzado
                                 </div>
                             ` : ''}
 
                             <div class="space-y-2">
-                                ${eventsHtml || '<p class="text-[11px] text-slate-400 italic text-center py-3">Sin actividades</p>'}
+                                ${eventsHtml || '<p class="text-[11px] text-slate-400 italic text-center py-4">Sin actividades</p>'}
                             </div>
                         </div>
                     </div>
@@ -479,19 +530,19 @@
 
             const keys = Object.keys(minutasRawData);
             if (keys.length === 0) {
-                container.innerHTML = '<p class="text-xs text-slate-400 italic">No hay registros cargados.</p>';
+                container.innerHTML = '<p class="text-xs text-slate-400 italic">No hay acuerdos registrados en la nube.</p>';
                 return;
             }
 
             keys.reverse().forEach(key => {
                 const item = minutasRawData[key];
                 container.innerHTML += `
-                    <div class="p-3 bg-purple-50/40 rounded-xl border border-purple-100 flex items-center justify-between gap-3 text-xs">
+                    <div class="p-3 bg-[#eef4ff] rounded-xl border border-blue-100 flex items-center justify-between gap-3 text-xs">
                         <div>
-                            <p class="font-bold text-purple-950">${item.titulo}</p>
-                            <p class="text-[10px] text-purple-700">${item.responsable} • ${item.fecha || 'Reciente'}</p>
+                            <p class="font-bold text-slate-800">${item.titulo}</p>
+                            <p class="text-[10px] text-slate-500"><i class="fa-solid fa-user-tag"></i> ${item.responsable} • <i class="fa-regular fa-clock"></i> ${item.fecha || 'Reciente'}</p>
                         </div>
-                        <button type="button" onclick="eliminarMinuta('${key}')" class="text-slate-400 hover:text-rose-600 transition p-1" title="Eliminar"><i class="fa-solid fa-trash text-xs"></i></button>
+                        <button type="button" onclick="eliminarMinuta('${key}')" class="text-slate-400 hover:text-rose-600 transition p-1 cursor-pointer" title="Eliminar"><i class="fa-solid fa-trash text-xs"></i></button>
                     </div>
                 `;
             });
