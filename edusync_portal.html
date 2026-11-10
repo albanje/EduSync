@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduSync - Portal Académico Academium</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase App y Realtime Database (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+        }
+        
+        /* Estilos de navegación activos */
+        .nav-link-active { 
+            border-bottom: 3px solid #6b00d7; 
+            color: #6b00d7; 
+            font-weight: 800; 
+        }
+        
+        /* Animación para el personaje flotante del fondo */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-14px) rotate(3deg); }
+        }
+        .animate-float { 
+            animation: floatSlow 6s ease-in-out infinite; 
+        }
+
+        /* Personalización de scrollbar para modales */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #c084fc;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col text-slate-800 bg-white relative min-h-screen overflow-x-hidden selection:bg-purple-500 selection:text-white">
+
+    <!-- ========================================== -->
+    <!-- FONDO ACADEMIUM: OLA MORADA + AVATAR VR + PLANETAS -->
+    <!-- ========================================== -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <!-- Mancha difuminada inferior izquierda -->
+        <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-[#f4e8ff] rounded-full blur-3xl opacity-80"></div>
+        
+        <!-- Ilustración Vectorial Espacial Derecha -->
+        <div class="absolute top-12 right-0 w-full lg:w-[58%] h-[calc(100vh-3rem)] flex justify-end items-center opacity-30 lg:opacity-100 transition-opacity">
+            <svg class="w-full h-full max-h-[850px] object-cover" viewBox="0 0 700 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Gran Mancha Morada Orgánica -->
+                <path d="M650 100C720 200 680 350 640 480C600 610 520 680 380 660C240 640 180 520 210 410C240 300 320 260 370 190C420 120 580 0 650 100Z" fill="url(#academium-grad)" />
+                
+                <!-- Anillos y Rayos Espaciales -->
+                <path d="M250 280 Q 450 180, 620 320 T 500 550" stroke="white" stroke-width="6" stroke-linecap="round" opacity="0.3" fill="none"/>
+                <path d="M300 220 Q 500 140, 660 260" stroke="white" stroke-width="4" stroke-linecap="round" opacity="0.2" fill="none"/>
+                
+                <!-- Planetas 3D en órbita -->
+                <circle cx="580" cy="180" r="36" fill="#e9d5ff" opacity="0.75"/>
+                <circle cx="595" cy="170" r="14" fill="#c084fc" opacity="0.9"/>
+                <circle cx="280" cy="490" r="24" fill="#f472b6" opacity="0.85"/>
+                <rect x="520" y="440" width="28" height="28" rx="6" transform="rotate(25 520 440)" fill="#60a5fa" opacity="0.8"/>
+                <rect x="340" y="240" width="18" height="18" rx="4" transform="rotate(12 340 240)" fill="#a7f3d0" opacity="0.75"/>
+                
+                <!-- Destellos de estrellas -->
+                <path d="M480 120 L484 130 L494 134 L484 138 L480 148 L476 138 L466 134 L476 130 Z" fill="white" opacity="0.9"/>
+                <path d="M320 360 L323 367 L330 370 L323 373 L320 380 L317 373 L310 370 L317 367 Z" fill="white" opacity="0.8"/>
+                
+                <!-- Personaje VR Flotante -->
+                <g class="animate-float" transform="translate(320, 260) scale(1.1)">
+                    <path d="M60 140 C40 120, 20 100, -10 110 C-20 115, -10 130, 10 130 C30 130, 50 145, 70 160 Z" fill="#38bdf8"/>
+                    <path d="M140 130 C170 145, 200 130, 220 150 C225 155, 215 165, 200 160 C180 155, 150 160, 130 145 Z" fill="#38bdf8"/>
+                    <path d="M50 130 L150 120 L160 180 L40 190 Z" fill="#0284c7"/>
+                    <circle cx="100" cy="90" r="26" fill="#1e1b4b"/>
+                    <rect x="80" y="80" width="42" height="20" rx="8" fill="#f43f5e"/>
+                    <rect x="84" y="84" width="34" height="12" rx="5" fill="#38bdf8" opacity="0.9"/>
+                </g>
+
+                <defs>
+                    <linearGradient id="academium-grad" x1="200" y1="50" x2="680" y2="650" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#8b5cf6" />
+                        <stop offset="45%" stop-color="#6b00d7" />
+                        <stop offset="100%" stop-color="#4c0099" />
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- HEADER PRINCIPAL ACADEMIUM -->
+    <!-- ========================================== -->
+    <header class="bg-[#6b00d7] text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between relative z-10">
+            <!-- Logo e Identificador -->
+            <div class="flex items-center space-x-3">
+                <div id="secret-logo-trigger" onclick="abrirModalClave()" class="w-10 h-10 rounded-xl bg-white/15 hover:bg-white/30 flex items-center justify-center text-white font-bold text-xl cursor-pointer transition transform active:scale-95 border border-white/20" title="EduSync Easter Egg Trigger">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="font-extrabold text-xl tracking-tight text-white">Academium</span>
+                    <span class="text-xs bg-white/20 text-purple-100 px-2.5 py-0.5 rounded-full font-bold">EduSync Live</span>
+                </div>
+            </div>
+            
+            <!-- Estado Conexión & Botón Inicio -->
+            <div class="flex items-center space-x-4">
+                <span id="cloud-status" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-400/20 text-emerald-200 border border-emerald-400/30">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Nube Conectada
+                </span>
+                <span class="text-xs font-black text-amber-300 tracking-wider hover:text-amber-200 cursor-pointer uppercase py-1 px-3 rounded hover:bg-white/10 transition">INICIO</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- PESTAÑAS NAVEGABLES SECUNDARIAS -->
+    <!-- ========================================== -->
+    <nav class="bg-white/85 backdrop-blur-md border-b border-purple-100 sticky top-16 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-6 overflow-x-auto">
+                <button onclick="switchTab('calendar')" id="tab-btn-calendar" class="tab-btn nav-link-active py-4 px-1 inline-flex items-center gap-2 text-xs sm:text-sm font-bold border-b-2 transition whitespace-nowrap">
+                    <i class="fa-solid fa-calendar-days text-[#6b00d7]"></i> Calendario Académico Anti-Saturación
+                </button>
+                <button onclick="switchTab('minutas')" id="tab-btn-minutas" class="tab-btn text-slate-500 hover:text-[#6b00d7] py-4 px-1 inline-flex items-center gap-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent transition whitespace-nowrap">
+                    <i class="fa-solid fa-clipboard-check"></i> Gestor de Minutas y Acuerdos
+                </button>
+                <button onclick="switchTab('canales')" id="tab-btn-canales" class="tab-btn text-slate-500 hover:text-[#6b00d7] py-4 px-1 inline-flex items-center gap-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent transition whitespace-nowrap">
+                    <i class="fa-solid fa-network-wired text-rose-600"></i> Matriz de Canales Oficiales
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========================================== -->
+    <!-- CONTENIDO PRINCIPAL MAIN -->
+    <!-- ========================================== -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 relative z-10">
+
+        <!-- TAB 1: CALENDARIO ANTI-SATURACIÓN -->
+        <section id="tab-calendar" class="tab-content space-y-6">
+            <div class="bg-white/90 backdrop-blur-md rounded-2xl p-5 border border-purple-100 shadow-md flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="font-extrabold text-slate-900 text-lg">Ingreso <span class="text-[#a824fd]">Portal Académico</span></h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Límite activo: <span class="bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">Máximo 2 evaluaciones mayores por día</span></p>
+                </div>
+
+                <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs font-bold text-slate-700">Curso:</label>
+                        <select id="filtro-grado" onchange="cambiarGrado()" class="bg-[#eef4ff] border border-blue-200 text-slate-800 text-xs rounded-xl px-3 py-2 font-bold outline-none focus:ring-2 focus:ring-[#6b00d7]">
+                            <option value="9no Grado">9no Grado</option>
+                            <option value="10mo Grado">10mo Grado</option>
+                            <option value="1er Bachillerato">1er Bachillerato</option>
+                        </select>
+                    </div>
+
+                    <button onclick="openAddModal()" class="bg-[#6100e0] hover:bg-[#5200bd] text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md transition flex items-center gap-2 active:scale-95">
+                        <i class="fa-solid fa-plus"></i> Programar Evaluación
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grilla Semanal (Lunes a Viernes) -->
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="calendar-grid">
+                <!-- Se construye dinámicamente con Firebase -->
+            </div>
+        </section>
+
+        <!-- TAB 2: MINUTAS Y ACUERDOS -->
+        <section id="tab-minutas" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Formulario -->
+                <div class="bg-white/90 backdrop-blur-md rounded-2xl p-5 border border-purple-100 shadow-md lg:col-span-1 h-fit">
+                    <h3 class="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-[#6b00d7]"></i> Registrar Acuerdo de Reunión
+                    </h3>
+                    <form onsubmit="guardarMinuta(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Título del Acuerdo</label>
+                            <input type="text" id="minuta-titulo" required placeholder="Ej: Ajustar temario de examen final" class="w-full bg-[#eef4ff] border border-blue-200 rounded-xl text-xs p-3 font-medium outline-none focus:ring-2 focus:ring-[#6b00d7]">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Responsable</label>
+                            <select id="minuta-responsable" class="w-full bg-[#eef4ff] border border-blue-200 rounded-xl text-xs p-3 font-semibold outline-none focus:ring-2 focus:ring-[#6b00d7]">
+                                <option value="Arianna">Arianna</option>
+                                <option value="Jorge">Jorge</option>
+                                <option value="Sury">Sury</option>
+                                <option value="Sergio">Sergio</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-[#6100e0] hover:bg-[#5200bd] text-white text-xs font-bold py-3 rounded-xl shadow-md transition active:scale-95">
+                            Guardar en la Nube
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Lista de Acuerdos Synced -->
+                <div class="bg-white/90 backdrop-blur-md rounded-2xl p-5 border border-purple-100 shadow-md lg:col-span-2 space-y-4">
+                    <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-600"></i> Acuerdos Sincronizados
+                    </h3>
+                    <div id="lista-minutas" class="space-y-3">
+                        <!-- Datos en tiempo real -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: MATRIZ DE CANALES OFICIALES -->
+        <section id="tab-canales" class="tab-content hidden space-y-6">
+            <div class="bg-white/90 backdrop-blur-md rounded-2xl p-6 border border-purple-100 shadow-md">
+                <div class="border-b border-purple-100 pb-4 mb-6">
+                    <h3 class="font-bold text-slate-900 text-xl flex items-center gap-2">
+                        <i class="fa-solid fa-network-wired text-[#6b00d7]"></i> Matriz de Canales Oficiales de Comunicación
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">Protocolo institucional de comunicación docente en EduSync para garantizar el descanso y eliminar el uso desmedido de chats no oficiales.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Urgencias -->
+                    <div class="p-5 rounded-2xl bg-rose-50 border border-rose-200 space-y-3 relative overflow-hidden">
+                        <div class="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center text-lg font-bold shadow-md">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <h4 class="font-bold text-rose-900 text-base">Urgencias e Imprevistos</h4>
+                        <p class="text-xs text-rose-800 leading-relaxed">Vía exclusiva para eventos críticos que afecten directamente la jornada o la seguridad escolar.</p>
+                        <div class="pt-2">
+                            <span class="inline-flex items-center gap-1.5 text-[11px] bg-rose-200 text-rose-900 px-3 py-1 rounded-full font-bold">
+                                <i class="fa-solid fa-bolt"></i> Respuesta Inmediata
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Operaciones Diarias -->
+                    <div class="p-5 rounded-2xl bg-indigo-50 border border-indigo-200 space-y-3 relative overflow-hidden">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-lg font-bold shadow-md">
+                            <i class="fa-brands fa-microsoft"></i>
+                        </div>
+                        <h4 class="font-bold text-indigo-900 text-base">Operaciones Diarias</h4>
+                        <p class="text-xs text-indigo-800 leading-relaxed">Canales oficiales en Microsoft Teams ordenados por departamento académico y asignatura.</p>
+                        <div class="pt-2">
+                            <span class="inline-flex items-center gap-1.5 text-[11px] bg-indigo-200 text-indigo-900 px-3 py-1 rounded-full font-bold">
+                                <i class="fa-solid fa-clock"></i> Solo Horario Laboral
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Solicitudes Formales -->
+                    <div class="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-3 relative overflow-hidden">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-lg font-bold shadow-md">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <h4 class="font-bold text-emerald-900 text-base">Solicitudes Formales</h4>
+                        <p class="text-xs text-emerald-800 leading-relaxed">Correo institucional para actas, permisos, justificativos e informes dirigidos a directivos.</p>
+                        <div class="pt-2">
+                            <span class="inline-flex items-center gap-1.5 text-[11px] bg-emerald-200 text-emerald-900 px-3 py-1 rounded-full font-bold">
+                                <i class="fa-solid fa-calendar-check"></i> Respuesta 24 a 48h
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========================================== -->
+    <!-- FOOTER CON ACCESO EASTER EGG -->
+    <!-- ========================================== -->
+    <footer class="mt-auto bg-white/80 border-t border-purple-100 py-4 px-6 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 relative z-10 gap-2">
+        <span onclick="abrirModalClave()" class="cursor-pointer text-[11px] text-slate-400 font-mono hover:text-[#6b00d7] transition select-none flex items-center gap-1" title="Clic para desbloquear el Secret Hub">
+            <i class="fa-solid fa-lock text-[10px]"></i> 6123 (EASTER EGG)
+        </span>
+        <span>© 2026 Desarrollado por Soluciones Integrales OMNISOFT Cía. Ltda.</span>
+    </footer>
+
+    <!-- ========================================== -->
+    <!-- MODAL 1: PROGRAMAR EVALUACIÓN -->
+    <!-- ========================================== -->
+    <div id="add-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto border border-purple-100">
+            <div class="flex justify-between items-center border-b border-purple-100 pb-3">
+                <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-plus text-[#6b00d7]"></i> Programar Actividad Escolar
+                </h3>
+                <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <form onsubmit="saveCalendarEvent(event)" class="space-y-3.5 text-xs">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Día de la Semana</label>
+                        <select id="modal-dia" class="w-full bg-[#eef4ff] border border-blue-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-[#6b00d7]">
+                            <option value="Lunes">Lunes</option>
+                            <option value="Martes">Martes</option>
+                            <option value="Miércoles">Miércoles</option>
+                            <option value="Jueves">Jueves</option>
+                            <option value="Viernes">Viernes</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Tipo de Actividad</label>
+                        <select id="modal-tipo" class="w-full bg-[#eef4ff] border border-blue-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-[#6b00d7]">
+                            <option value="Examen Mayor">🔴 Examen Mayor</option>
+                            <option value="Entrega de Proyecto">🟣 Entrega de Proyecto</option>
+                            <option value="Quiz / Prueba Corta">🟡 Quiz / Prueba Corta</option>
+                            <option value="Tarea Regular">🔵 Tarea Regular</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Asignatura</label>
+                        <input type="text" id="modal-materia" required placeholder="Ej: Matemáticas" class="w-full bg-[#eef4ff] border border-blue-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-[#6b00d7]">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Docente Responsable</label>
+                        <select id="modal-docente" class="w-full bg-[#eef4ff] border border-blue-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-[#6b00d7]">
+                            <option value="Sergio">Sergio</option>
+                            <option value="Arianna">Arianna</option>
+                            <option value="Jorge">Jorge</option>
+                            <option value="Sury">Sury</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Descripción / Temario</label>
+                    <textarea id="modal-texto" rows="3" placeholder="Detalla los temas o instrucciones principales..." class="w-full bg-[#eef4ff] border border-blue-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-[#6b00d7]"></textarea>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1"><i class="fa-solid fa-paperclip text-slate-400 mr-1"></i> Adjuntar Enlace (Drive, PDF, etc.)</label>
+                    <input type="url" id="modal-archivo" placeholder="https://drive.google.com/..." class="w-full bg-[#eef4ff] border border-blue-200 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-[#6b00d7]">
+                </div>
+
+                <div class="flex justify-end gap-2 pt-3 border-t border-purple-100">
+                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl font-bold">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-[#6100e0] hover:bg-[#5200bd] text-white rounded-xl font-bold shadow-md">Guardar y Sincronizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 2: INGRESO PIN SECRETO (6123) -->
+    <!-- ========================================== -->
+    <div id="key-input-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm hidden items-center justify-center z-[90] p-4">
+        <div class="bg-white border border-purple-200 rounded-2xl shadow-2xl max-w-xs w-full p-6 space-y-4 text-center">
+            <div class="w-12 h-12 rounded-2xl bg-purple-100 text-[#6b00d7] border border-purple-200 flex items-center justify-center mx-auto text-xl shadow-inner">
+                <i class="fa-solid fa-key"></i>
+            </div>
+            <div>
+                <h3 class="font-extrabold text-slate-900 text-base">Modo Secreto</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Ingresa el PIN para desbloquear:</p>
+            </div>
+            
+            <form onsubmit="verificarClaveIngresada(event)" class="space-y-3">
+                <input type="password" id="secret-pin-input" placeholder="****" maxlength="8" class="w-full bg-[#eef4ff] border border-blue-200 text-center text-slate-900 text-xl font-black tracking-widest rounded-xl py-2.5 outline-none focus:ring-2 focus:ring-[#6b00d7]">
+                <p id="pin-error-msg" class="text-xs text-rose-600 hidden font-bold"><i class="fa-solid fa-circle-exclamation mr-1"></i> PIN incorrecto</p>
+                <div class="flex gap-2">
+                    <button type="button" onclick="cerrarModalClave()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2.5 rounded-xl">Cancelar</button>
+                    <button type="submit" class="w-1/2 bg-[#6100e0] hover:bg-[#5200bd] text-white text-xs font-bold py-2.5 rounded-xl shadow-md">Acceder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 3: SECRET HUB (PSP Y PS VITA COMPLETOS) -->
+    <!-- ========================================== -->
+    <div id="secret-hub-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center z-[100] p-4">
+        <div class="bg-white border border-purple-200 rounded-2xl shadow-2xl max-w-lg w-full p-6 text-center space-y-5 relative max-h-[85vh] flex flex-col justify-between">
+            
+            <!-- Botón cerrar -->
+            <button onclick="cerrarSecretHub()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 text-xl transition"><i class="fa-solid fa-xmark"></i></button>
+            
+            <!-- Encabezado Hub -->
+            <div class="space-y-2 pt-2">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#6b00d7] to-[#a824fd] text-white flex items-center justify-center mx-auto text-2xl shadow-lg shadow-purple-500/30">
+                    <i class="fa-solid fa-gamepad"></i>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-slate-900 text-xl tracking-wide">Modo Secreto Desbloqueado</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Acceso directo a consolas portátiles y almacenamiento de juegos:</p>
+                </div>
+            </div>
+            
+            <!-- Contenido con scroll -->
+            <div class="space-y-5 overflow-y-auto pr-1 text-left custom-scroll my-2">
+                
+                <!-- BLOQUE 1: PLAYSTATION PORTABLE (PSP) -->
+                <div class="p-4 rounded-2xl bg-purple-50/70 border border-purple-200 space-y-3">
+                    <div class="flex items-center gap-2 border-b border-purple-200/60 pb-2">
+                        <i class="fa-solid fa-compact-disc text-[#6b00d7] text-base"></i>
+                        <h4 class="font-extrabold text-purple-950 text-xs sm:text-sm uppercase tracking-wider">PlayStation Portable (PSP)</h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <!-- Botón 1: Emulador Web -->
+                        <a href="https://root-hunter.github.io/ppsspp-web/?runtime-isolation=1794243516609" target="_blank" class="w-full bg-[#6100e0] hover:bg-[#5200bd] text-white font-bold py-3 px-3 rounded-xl shadow transition flex items-center justify-between text-xs group">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-play text-amber-300"></i> Emulador PPSSPP Web
+                            </span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-70 group-hover:opacity-100"></i>
+                        </a>
+
+                        <!-- Botón 2: Carpeta Drive ISO -->
+                        <a href="https://drive.google.com/drive/folders/1g4eZ0z_F2PBJqT6pLJtlui4ojiYMc0kV?usp=sharing" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-3 rounded-xl shadow transition flex items-center justify-between text-xs group">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-folder-open text-emerald-200"></i> Carpeta Juegos PSP (.ISO)
+                            </span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-70 group-hover:opacity-100"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- BLOQUE 2: PLAYSTATION VITA (PS VITA) -->
+                <div class="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200 space-y-3">
+                    <div class="flex items-center gap-2 border-b border-indigo-200/60 pb-2">
+                        <i class="fa-solid fa-gamepad text-indigo-600 text-base"></i>
+                        <h4 class="font-extrabold text-indigo-950 text-xs sm:text-sm uppercase tracking-wider">PlayStation Vita (PS VITA)</h4>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <!-- Botón 3: Emulador Web Iframe -->
+                        <button type="button" onclick="abrirEmuladorVita()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-3 rounded-xl shadow transition flex items-center justify-between text-xs cursor-pointer group">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-window-restore text-indigo-200"></i> Emulador Vita (Iframe)
+                            </span>
+                            <i class="fa-solid fa-chevron-right text-[10px] opacity-70 group-hover:opacity-100"></i>
+                        </button>
+
+                        <!-- Botón 4: Carpeta Drive Vita -->
+                        <a href="https://drive.google.com/drive/folders/1cgdD_j5xbQv70VnpK-QlUx1pNVTz_28z?usp=sharing" target="_blank" class="w-full bg-purple-900 hover:bg-purple-800 text-white font-bold py-3 px-3 rounded-xl shadow transition flex items-center justify-between text-xs group">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-folder-open text-purple-300"></i> Carpeta Juegos PS Vita
+                            </span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-70 group-hover:opacity-100"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pt-2 border-t border-slate-100 text-center">
+                <button type="button" onclick="cerrarSecretHub()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 px-6 rounded-xl transition">
+                    Cerrar Panel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL 4: EMULADOR PS VITA (VITASLOP EN IFRAME) -->
+    <!-- ========================================== -->
+    <div id="vita-emulator-modal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md hidden items-center justify-center z-[110] p-2 sm:p-6">
+        <div class="bg-slate-900 border border-purple-900 rounded-2xl shadow-2xl max-w-6xl w-full h-[92vh] flex flex-col overflow-hidden relative">
+            <!-- Header Iframe -->
+            <div class="bg-slate-800 px-4 sm:px-6 py-3 border-b border-slate-700 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <span class="w-3 h-3 rounded-full bg-purple-500 animate-pulse"></span>
+                    <h3 class="font-bold text-white text-xs sm:text-base tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-gamepad text-purple-400"></i> PS Vita Web Emulator (Vitaslop)
+                    </h3>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <a href="https://cretz.github.io/vitaslop/" target="_blank" class="bg-[#6100e0] hover:bg-[#5200bd] text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> <span class="hidden sm:inline">Pestaña Nueva</span>
+                    </a>
+                    <button onclick="cerrarEmuladorVita()" class="text-slate-400 hover:text-white text-xl transition px-2 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+
+            <!-- Iframe Container -->
+            <div class="relative w-full flex-1 bg-black overflow-hidden">
+                <iframe id="vita-iframe" 
+                        src="" 
+                        class="w-full h-full border-0" 
+                        allow="cross-origin-isolated; autoplay; fullscreen; gamepad; clipboard-read; clipboard-write; acceleration; gyroscope" 
+                        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals allow-downloads">
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT & REALTIME DATABASE LOGIC -->
+    <!-- ========================================== -->
+    <script>
+        // Configuración oficial Firebase Realtime Database para EduSync
+        const firebaseConfig = {
+            databaseURL: "https://edusync-c85df-default-rtdb.firebaseio.com/"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let currentGrado = "9no Grado";
+        let fullCalendarData = {};
+        let calendarData = { "Lunes": [], "Martes": [], "Miércoles": [], "Jueves": [], "Viernes": [] };
+        let minutasRawData = {};
+
+        const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+
+        // Escuchar datos del Calendario en tiempo real
+        db.ref('calendar').on('value', (snapshot) => {
+            fullCalendarData = snapshot.val() || {};
+            actualizarVistaGrado();
+        });
+
+        // Escuchar datos de las Minutas en tiempo real
+        db.ref('minutas').on('value', (snapshot) => {
+            minutasRawData = snapshot.val() || {};
+            renderMinutas();
+        });
+
+        function actualizarVistaGrado() {
+            if (!fullCalendarData[currentGrado]) {
+                calendarData = { "Lunes": [], "Martes": [], "Miércoles": [], "Jueves": [], "Viernes": [] };
+            } else {
+                calendarData = fullCalendarData[currentGrado];
+                diasSemana.forEach(d => { if (!calendarData[d]) calendarData[d] = []; });
+            }
+            renderCalendar();
+        }
+
+        function cambiarGrado() {
+            currentGrado = document.getElementById('filtro-grado').value;
+            actualizarVistaGrado();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('nav-link-active');
+                btn.classList.add('text-slate-500', 'border-transparent');
+            });
+            
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            activeBtn.classList.add('nav-link-active');
+            activeBtn.classList.remove('text-slate-500', 'border-transparent');
+        }
+
+        function renderCalendar() {
+            const container = document.getElementById('calendar-grid');
+            container.innerHTML = '';
+
+            diasSemana.forEach(dia => {
+                const eventos = calendarData[dia] || [];
+                const examenesMayores = eventos.filter(e => e.tipo === 'Examen Mayor').length;
+                const isOverloaded = examenesMayores >= 2;
+
+                let eventsHtml = eventos.map((ev, index) => {
+                    let badgeColor = 'bg-blue-50 text-blue-900 border-blue-200';
+                    let icon = 'fa-book';
+                    if (ev.tipo === 'Examen Mayor') { badgeColor = 'bg-rose-50 text-rose-900 border-rose-200'; icon = 'fa-file-pen'; }
+                    else if (ev.tipo === 'Entrega de Proyecto') { badgeColor = 'bg-purple-50 text-purple-900 border-purple-200'; icon = 'fa-diagram-project'; }
+                    else if (ev.tipo === 'Quiz / Prueba Corta') { badgeColor = 'bg-amber-50 text-amber-900 border-amber-200'; icon = 'fa-clock'; }
+
+                    return `
+                        <div class="p-2.5 rounded-xl border ${badgeColor} text-xs space-y-1 shadow-sm relative group">
+                            <div class="flex justify-between items-center font-bold">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid ${icon}"></i> ${ev.materia}</span>
+                                <button type="button" onclick="deleteEvent('${dia}', ${index})" class="text-slate-400 hover:text-rose-600 transition p-1 cursor-pointer" title="Eliminar"><i class="fa-solid fa-trash text-xs"></i></button>
+                            </div>
+                            <div class="text-[10px] font-semibold opacity-90">${ev.tipo || 'Evaluación'}</div>
+                            <p class="text-[10px] text-slate-600"><i class="fa-solid fa-user-tie"></i> Prof. ${ev.docente}</p>
+                            ${ev.texto ? `<p class="text-[10px] text-slate-700 bg-white/90 p-1.5 rounded-lg mt-1 border border-slate-200/50">${ev.texto}</p>` : ''}
+                            ${ev.archivo ? `<a href="${ev.archivo}" target="_blank" class="inline-flex items-center gap-1 text-[10px] text-[#6b00d7] hover:underline font-bold mt-1"><i class="fa-solid fa-paperclip"></i> Ver Adjunto</a>` : ''}
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML += `
+                    <div class="bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-md flex flex-col justify-between space-y-3 border ${isOverloaded ? 'border-amber-400 bg-amber-50/40' : 'border-purple-100'}">
+                        <div>
+                            <div class="flex items-center justify-between border-b border-purple-100 pb-2 mb-3">
+                                <h4 class="font-bold text-slate-800 text-sm">${dia}</h4>
+                                <span class="text-[10px] font-semibold text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full">${eventos.length} act.</span>
+                            </div>
+
+                            ${isOverloaded ? `
+                                <div class="mb-3 p-1.5 bg-amber-100 border border-amber-300 rounded-xl text-[10px] font-bold text-amber-800 flex items-center gap-1">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> Límite alcanzado (Máx 2)
+                                </div>
+                            ` : ''}
+
+                            <div class="space-y-2">
+                                ${eventsHtml || '<p class="text-[11px] text-slate-400 italic text-center py-4">Sin actividades</p>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function openAddModal() {
+            document.getElementById('add-modal').classList.remove('hidden');
+            document.getElementById('add-modal').classList.add('flex');
+        }
+
+        function closeAddModal() {
+            document.getElementById('add-modal').classList.add('hidden');
+            document.getElementById('add-modal').classList.remove('flex');
+        }
+
+        function saveCalendarEvent(e) {
+            e.preventDefault();
+            const dia = document.getElementById('modal-dia').value;
+            const tipo = document.getElementById('modal-tipo').value;
+            const materia = document.getElementById('modal-materia').value;
+            const docente = document.getElementById('modal-docente').value;
+            const texto = document.getElementById('modal-texto').value;
+            const archivo = document.getElementById('modal-archivo').value;
+
+            if (!fullCalendarData[currentGrado]) fullCalendarData[currentGrado] = {};
+            if (!fullCalendarData[currentGrado][dia]) fullCalendarData[currentGrado][dia] = [];
+
+            fullCalendarData[currentGrado][dia].push({ tipo, materia, docente, texto, archivo });
+            db.ref('calendar/' + currentGrado).set(fullCalendarData[currentGrado]);
+
+            closeAddModal();
+            document.getElementById('modal-materia').value = '';
+            document.getElementById('modal-texto').value = '';
+            document.getElementById('modal-archivo').value = '';
+        }
+
+        function deleteEvent(dia, index) {
+            fullCalendarData[currentGrado][dia].splice(index, 1);
+            db.ref('calendar/' + currentGrado).set(fullCalendarData[currentGrado]);
+        }
+
+        function guardarMinuta(e) {
+            e.preventDefault();
+            const titulo = document.getElementById('minuta-titulo').value;
+            const responsable = document.getElementById('minuta-responsable').value;
+
+            db.ref('minutas').push({ titulo, responsable, fecha: new Date().toLocaleDateString('es-ES') });
+            document.getElementById('minuta-titulo').value = '';
+        }
+
+        function renderMinutas() {
+            const container = document.getElementById('lista-minutas');
+            container.innerHTML = '';
+            
+            const keys = Object.keys(minutasRawData);
+            if (keys.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 italic py-2">No hay acuerdos registrados en la nube.</p>';
+                return;
+            }
+
+            keys.reverse().forEach(key => {
+                const item = minutasRawData[key];
+                container.innerHTML += `
+                    <div class="p-3 bg-[#eef4ff] rounded-xl border border-blue-200 text-xs flex justify-between items-center shadow-sm">
+                        <div>
+                            <p class="font-bold text-slate-900">${item.titulo}</p>
+                            <p class="text-[10px] text-slate-500"><i class="fa-solid fa-user-tag mr-1"></i>Resp: ${item.responsable} • <i class="fa-regular fa-clock mr-1"></i>${item.fecha || 'Reciente'}</p>
+                        </div>
+                        <button onclick="eliminarMinuta('${key}')" class="text-slate-400 hover:text-rose-600 transition p-1"><i class="fa-solid fa-trash text-xs"></i></button>
+                    </div>
+                `;
+            });
+        }
+
+        function eliminarMinuta(key) {
+            db.ref('minutas/' + key).remove();
+        }
+
+        // ==========================================
+        // LÓGICA DEL MODO SECRETO (EASTER EGG PIN 6123)
+        // ==========================================
+        function abrirModalClave() {
+            document.getElementById('secret-pin-input').value = '';
+            document.getElementById('pin-error-msg').classList.add('hidden');
+            document.getElementById('key-input-modal').classList.remove('hidden');
+            document.getElementById('key-input-modal').classList.add('flex');
+            setTimeout(() => document.getElementById('secret-pin-input').focus(), 100);
+        }
+
+        function cerrarModalClave() {
+            document.getElementById('key-input-modal').classList.add('hidden');
+            document.getElementById('key-input-modal').classList.remove('flex');
+        }
+
+        function verificarClaveIngresada(e) {
+            e.preventDefault();
+            const pin = document.getElementById('secret-pin-input').value.trim();
+            if (pin === "6123") {
+                cerrarModalClave();
+                abrirSecretHub();
+            } else {
+                document.getElementById('pin-error-msg').classList.remove('hidden');
+                document.getElementById('secret-pin-input').value = '';
+                document.getElementById('secret-pin-input').focus();
+            }
+        }
+
+        function abrirSecretHub() {
+            document.getElementById('secret-hub-modal').classList.remove('hidden');
+            document.getElementById('secret-hub-modal').classList.add('flex');
+        }
+
+        function cerrarSecretHub() {
+            document.getElementById('secret-hub-modal').classList.add('hidden');
+            document.getElementById('secret-hub-modal').classList.remove('flex');
+        }
+
+        function abrirEmuladorVita() {
+            cerrarSecretHub();
+            const iframe = document.getElementById('vita-iframe');
+            if (!iframe.src || iframe.src === "" || iframe.src === window.location.href) {
+                iframe.src = "https://cretz.github.io/vitaslop/";
+            }
+            document.getElementById('vita-emulator-modal').classList.remove('hidden');
+            document.getElementById('vita-emulator-modal').classList.add('flex');
+        }
+
+        function cerrarEmuladorVita() {
+            document.getElementById('vita-emulator-modal').classList.add('hidden');
+            document.getElementById('vita-emulator-modal').classList.remove('flex');
+        }
+    </script>
+</body>
+</html>
