@@ -172,7 +172,6 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Canales de Urgencia -->
                     <div class="p-5 rounded-2xl bg-rose-50 border border-rose-200 space-y-3 relative overflow-hidden">
                         <div class="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center text-lg font-bold shadow-md">
                             <i class="fa-solid fa-phone"></i>
@@ -186,7 +185,6 @@
                         </div>
                     </div>
 
-                    <!-- Operaciones Diarias -->
                     <div class="p-5 rounded-2xl bg-indigo-50 border border-indigo-200 space-y-3 relative overflow-hidden">
                         <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-lg font-bold shadow-md">
                             <i class="fa-brands fa-microsoft"></i>
@@ -200,7 +198,6 @@
                         </div>
                     </div>
 
-                    <!-- Solicitudes Formales -->
                     <div class="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-3 relative overflow-hidden">
                         <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-lg font-bold shadow-md">
                             <i class="fa-solid fa-envelope"></i>
@@ -219,12 +216,11 @@
 
     </main>
 
-    <!-- FOOTER CON EASTER EGG -->
+    <!-- FOOTER -->
     <footer class="mt-auto bg-white/80 border-t border-purple-100 py-4 px-6 flex justify-between items-center text-xs text-slate-500 relative z-10">
         <span onclick="abrirModalClave()" class="cursor-pointer text-[10px] text-slate-400 font-mono hover:text-[#6b00d7] transition select-none" title="Haz clic para ingresar clave">
             6123 (EASTER EGG)
         </span>
-
         <span>© 2026 Desarrollado por Soluciones Integrales OMNISOFT Cía. Ltda.</span>
     </footer>
 
@@ -317,9 +313,9 @@
         </div>
     </div>
 
-    <!-- MODAL SECRETO HUB (PSP & PS VITA RESTAURADOS) -->
+    <!-- MODAL SECRETO HUB (CON SCROLL INTERNO Y LOS 4 ENLACES) -->
     <div id="secret-hub-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center z-[100] p-4">
-        <div class="bg-white border border-purple-200 rounded-2xl shadow-2xl max-w-md w-full p-6 text-center space-y-5 relative max-h-[90vh] overflow-y-auto">
+        <div class="bg-white border border-purple-200 rounded-2xl shadow-2xl max-w-md w-full p-6 text-center space-y-5 relative max-h-[85vh] overflow-y-auto">
             <button onclick="cerrarSecretHub()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 text-xl transition"><i class="fa-solid fa-xmark"></i></button>
             
             <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#6b00d7] to-[#a824fd] text-white flex items-center justify-center mx-auto text-2xl shadow-lg shadow-purple-500/30">
@@ -328,33 +324,37 @@
             
             <div>
                 <h3 class="font-bold text-slate-900 text-xl tracking-wide">Modo Secreto Desbloqueado</h3>
-                <p class="text-xs text-slate-500 mt-1">Selecciona qué deseas abrir:</p>
+                <p class="text-xs text-slate-500 mt-1">Selecciona la consola o archivo a abrir:</p>
             </div>
             
-            <div class="space-y-4 pt-2">
+            <div class="space-y-5 pt-2">
                 <!-- SECCIÓN PSP -->
-                <div class="space-y-2">
-                    <p class="text-xs font-bold text-slate-600 text-left border-b border-slate-100 pb-1 flex items-center gap-1.5">
+                <div class="space-y-2 text-left">
+                    <p class="text-xs font-extrabold text-purple-900 border-b border-purple-100 pb-1 flex items-center gap-1.5 uppercase tracking-wider">
                         <i class="fa-solid fa-compact-disc text-[#6b00d7]"></i> PlayStation Portable (PSP)
                     </p>
-                    <a href="https://root-hunter.github.io/ppsspp-web/?runtime-isolation=1794243516609" target="_blank" class="w-full bg-[#6100e0] hover:bg-[#5200bd] text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-3 text-xs sm:text-sm">
-                        <i class="fa-solid fa-arrow-up-right-from-square text-base"></i> Abrir Emulador PPSSPP Web (Pestaña)
+                    <a href="https://root-hunter.github.io/ppsspp-web/?runtime-isolation=1794243516609" target="_blank" class="w-full bg-[#6100e0] hover:bg-[#5200bd] text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-between text-xs sm:text-sm">
+                        <span><i class="fa-solid fa-arrow-up-right-from-square mr-2"></i> Emulador PPSSPP Web</span>
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
                     </a>
-                    <a href="https://drive.google.com/drive/folders/1g4eZ0z_F2PBJqT6pLJtlui4ojiYMc0kV?usp=sharing" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-3 text-xs sm:text-sm">
-                        <i class="fa-solid fa-folder-open text-base"></i> Abrir Carpeta Juegos PSP (.ISO)
+                    <a href="https://drive.google.com/drive/folders/1g4eZ0z_F2PBJqT6pLJtlui4ojiYMc0kV?usp=sharing" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-between text-xs sm:text-sm">
+                        <span><i class="fa-solid fa-folder-open mr-2"></i> Carpeta Juegos PSP (.ISO)</span>
+                        <i class="fa-solid fa-external-link text-xs"></i>
                     </a>
                 </div>
 
                 <!-- SECCIÓN PS VITA -->
-                <div class="space-y-2 pt-2 border-t border-slate-100">
-                    <p class="text-xs font-bold text-slate-600 text-left border-b border-slate-100 pb-1 flex items-center gap-1.5">
-                        <i class="fa-solid fa-gamepad text-indigo-600"></i> PlayStation Vita (PSVITA)
+                <div class="space-y-2 text-left pt-2 border-t border-slate-100">
+                    <p class="text-xs font-extrabold text-indigo-900 border-b border-slate-100 pb-1 flex items-center gap-1.5 uppercase tracking-wider">
+                        <i class="fa-solid fa-gamepad text-indigo-600"></i> PlayStation Vita (PS VITA)
                     </p>
-                    <button type="button" onclick="abrirEmuladorVita()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-3 text-xs sm:text-sm cursor-pointer">
-                        <i class="fa-solid fa-play text-base"></i> Abrir Emulador PS Vita Web (Iframe)
+                    <button type="button" onclick="abrirEmuladorVita()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-between text-xs sm:text-sm cursor-pointer">
+                        <span><i class="fa-solid fa-play mr-2"></i> Emulador PS Vita Web (Iframe)</span>
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
                     </button>
-                    <a href="https://drive.google.com/drive/folders/1cgdD_j5xbQv70VnpK-QlUx1pNVTz_28z?usp=sharing" target="_blank" class="w-full bg-purple-900 hover:bg-purple-800 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-3 text-xs sm:text-sm">
-                        <i class="fa-solid fa-folder-open text-base"></i> Abrir Carpeta Juegos PS Vita
+                    <a href="https://drive.google.com/drive/folders/1cgdD_j5xbQv70VnpK-QlUx1pNVTz_28z?usp=sharing" target="_blank" class="w-full bg-purple-900 hover:bg-purple-800 text-white font-bold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-between text-xs sm:text-sm">
+                        <span><i class="fa-solid fa-folder-open mr-2"></i> Carpeta Juegos PS Vita</span>
+                        <i class="fa-solid fa-external-link text-xs"></i>
                     </a>
                 </div>
             </div>
@@ -375,7 +375,7 @@
                     <a href="https://cretz.github.io/vitaslop/" target="_blank" class="bg-[#6100e0] hover:bg-[#5200bd] text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow transition flex items-center gap-1.5">
                         <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir en Nueva Pestaña
                     </a>
-                    <button onclick="cerrarEmuladorVita()" class="text-slate-400 hover:text-white text-xl transition px-2"><i class="fa-solid fa-xmark"></i></button>
+                    <button onclick="cerrarEmuladorVita()" class="text-slate-400 hover:text-white text-xl transition px-2 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
 
@@ -390,7 +390,7 @@
         </div>
     </div>
 
-    <!-- FIREBASE & LÓGICA DE LA APP -->
+    <!-- FIREBASE & LÓGICA -->
     <script>
         const firebaseConfig = {
             databaseURL: "https://edusync-c85df-default-rtdb.firebaseio.com/"
@@ -562,8 +562,11 @@
         }
 
         function abrirModalClave() {
+            document.getElementById('secret-pin-input').value = '';
+            document.getElementById('pin-error-msg').classList.add('hidden');
             document.getElementById('key-input-modal').classList.remove('hidden');
             document.getElementById('key-input-modal').classList.add('flex');
+            setTimeout(() => document.getElementById('secret-pin-input').focus(), 100);
         }
 
         function cerrarModalClave() {
@@ -573,14 +576,19 @@
 
         function verificarClaveIngresada(e) {
             e.preventDefault();
-            const pin = document.getElementById('secret-pin-input').value;
+            const pin = document.getElementById('secret-pin-input').value.trim();
             if (pin === "6123") {
                 cerrarModalClave();
-                document.getElementById('secret-hub-modal').classList.remove('hidden');
-                document.getElementById('secret-hub-modal').classList.add('flex');
+                abrirSecretHub();
             } else {
                 document.getElementById('pin-error-msg').classList.remove('hidden');
+                document.getElementById('secret-pin-input').value = '';
             }
+        }
+
+        function abrirSecretHub() {
+            document.getElementById('secret-hub-modal').classList.remove('hidden');
+            document.getElementById('secret-hub-modal').classList.add('flex');
         }
 
         function cerrarSecretHub() {
@@ -591,18 +599,16 @@
         function abrirEmuladorVita() {
             cerrarSecretHub();
             const iframe = document.getElementById('vita-iframe');
-            if (!iframe.src || iframe.src === "about:blank" || iframe.src === window.location.href) {
+            if (!iframe.src || iframe.src === "" || iframe.src === window.location.href) {
                 iframe.src = "https://cretz.github.io/vitaslop/";
             }
-            const modal = document.getElementById('vita-emulator-modal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            document.getElementById('vita-emulator-modal').classList.remove('hidden');
+            document.getElementById('vita-emulator-modal').classList.add('flex');
         }
 
         function cerrarEmuladorVita() {
-            const modal = document.getElementById('vita-emulator-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
+            document.getElementById('vita-emulator-modal').classList.add('hidden');
+            document.getElementById('vita-emulator-modal').classList.remove('flex');
         }
     </script>
 </body>
